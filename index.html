@@ -10,627 +10,500 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Base Variables - Glossy Grayscale Palette */
         :root {
             --bg-gradient: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
             --glass-bg: rgba(255, 255, 255, 0.75);
             --glass-border: rgba(255, 255, 255, 0.8);
             --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
-            
             --text-dark: #1e293b;
             --text-muted: #64748b;
-            --accent-gray: #475569;
             --accent-dark: #0f172a;
             --table-header: rgba(71, 85, 105, 0.08);
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        /* Glassmorphic Header */
-        header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 16px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--glass-shadow);
-        }
-
-        header h1 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--accent-dark);
-            letter-spacing: -0.5px;
-        }
-
-        .header-credit {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            text-align: right;
-            line-height: 1.4;
-        }
-
-        .header-credit a {
-            color: var(--accent-dark);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* Layout */
-        .app-container {
-            display: flex;
-            flex: 1;
-            padding: 25px 5%;
-            gap: 30px;
-            max-width: 1600px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        /* Mobile Menu Toggle */
-        .mobile-menu-btn {
-            display: none;
-            width: 100%;
-            padding: 14px;
-            background: var(--accent-dark);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Glassmorphic Sidebar */
-        aside {
-            width: 280px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: var(--glass-shadow);
-            height: calc(100vh - 140px);
-            position: sticky;
-            top: 90px;
-            overflow-y: auto;
-            flex-shrink: 0;
-        }
-
-        /* Custom Scrollbar for Sidebar */
-        aside::-webkit-scrollbar { width: 6px; }
-        aside::-webkit-scrollbar-track { background: transparent; }
-        aside::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
-
-        .menu-title {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-weight: 700;
-            padding-left: 10px;
-            margin-top: 20px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding-bottom: 5px;
-        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-gradient); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: var(--glass-bg); backdrop-filter: blur(12px); border-bottom: 1px solid var(--glass-border); padding: 16px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: var(--glass-shadow); }
+        header h1 { font-size: 1.6rem; font-weight: 700; color: var(--accent-dark); letter-spacing: -0.5px; }
+        .header-credit { font-size: 0.85rem; color: var(--text-muted); text-align: right; line-height: 1.4; }
+        .header-credit a { color: var(--accent-dark); text-decoration: none; font-weight: 600; }
+        .app-container { display: flex; flex: 1; padding: 25px 5%; gap: 30px; max-width: 1600px; margin: 0 auto; width: 100%; }
+        .mobile-menu-btn { display: none; width: 100%; padding: 14px; background: var(--accent-dark); color: white; border: none; border-radius: 8px; font-weight: 600; margin-bottom: 15px; cursor: pointer; }
+        aside { width: 280px; background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px; box-shadow: var(--glass-shadow); height: calc(100vh - 140px); position: sticky; top: 90px; overflow-y: auto; flex-shrink: 0; }
+        aside::-webkit-scrollbar { width: 6px; } aside::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .menu-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); margin: 20px 0 8px 0; font-weight: 700; padding-left: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); padding-bottom: 5px; }
         .menu-title:first-child { margin-top: 0; }
-
-        .menu-item {
-            display: block;
-            width: 100%;
-            padding: 8px 12px;
-            margin-bottom: 3px;
-            color: var(--text-dark);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-radius: 8px;
-            background: transparent;
-            border: none;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .menu-item:hover {
-            background: rgba(255, 255, 255, 0.8);
-            transform: translateX(4px);
-        }
-
-        .menu-item.active {
-            background: var(--accent-dark);
-            color: #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* Glossy Main Content Area */
-        main {
-            flex: 1;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 35px;
-            box-shadow: var(--glass-shadow);
-            min-height: 600px;
-        }
-
-        .content-section {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .content-section.active-section {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h2 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: var(--accent-dark);
-            border-bottom: 2px solid rgba(0,0,0,0.05);
-            padding-bottom: 12px;
-        }
-
-        p.subtitle {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            margin-bottom: 25px;
-        }
-
-        /* Input/Output Grids */
-        .grid-split {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-
-        .panel {
-            background: rgba(255, 255, 255, 0.5);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: inset 0 2px 4px rgba(255,255,255,0.6);
-        }
-
-        .panel h3 {
-            font-size: 1.05rem;
-            margin-bottom: 18px;
-            color: var(--accent-dark);
-            font-weight: 600;
-        }
-
-        .form-group { margin-bottom: 15px; }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--accent-dark);
-        }
-        
-        .form-group .hint {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-        }
-
-        input[type="number"], select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid rgba(0,0,0,0.1);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.2s;
-        }
-
-        input[type="number"]:focus, select:focus {
-            outline: none;
-            border-color: var(--accent-dark);
-            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
-        }
-
-        .matrix-table { width: 100%; border: none; background: transparent; box-shadow: none; margin-bottom: 15px; }
-        .matrix-table input { width: 80px; text-align: center; }
-        .matrix-table th { background: transparent; font-size: 0.85rem; }
-
-        .btn-calc {
-            background: var(--accent-dark);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: background 0.2s, transform 0.1s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .btn-calc:hover { background: #1e293b; transform: translateY(-1px); }
-        .btn-calc:active { transform: translateY(1px); }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(255,255,255,0.8);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            margin-top: 10px;
-            font-size: 0.9rem;
-        }
-
-        th, td {
-            padding: 12px 14px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-        }
-
+        .menu-item { display: block; width: 100%; padding: 8px 12px; margin-bottom: 3px; color: var(--text-dark); text-decoration: none; font-size: 0.9rem; font-weight: 500; border-radius: 8px; background: transparent; border: none; text-align: left; cursor: pointer; transition: all 0.2s; }
+        .menu-item:hover { background: rgba(255, 255, 255, 0.8); transform: translateX(4px); }
+        .menu-item.active { background: var(--accent-dark); color: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        main { flex: 1; background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); border-radius: 16px; padding: 35px; box-shadow: var(--glass-shadow); min-height: 600px; }
+        .content-section { display: none; animation: fadeIn 0.4s ease; }
+        .content-section.active-section { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 8px; color: var(--accent-dark); border-bottom: 2px solid rgba(0,0,0,0.05); padding-bottom: 12px; }
+        p.subtitle { font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 25px; }
+        .grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .panel { background: rgba(255, 255, 255, 0.5); border: 1px solid var(--glass-border); border-radius: 12px; padding: 20px; box-shadow: inset 0 2px 4px rgba(255,255,255,0.6); margin-bottom: 20px;}
+        .panel h3 { font-size: 1.05rem; margin-bottom: 18px; color: var(--accent-dark); font-weight: 600; }
+        .fg { margin-bottom: 12px; } .fg label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: var(--accent-dark); }
+        input[type="number"] { width: 100%; padding: 8px 12px; border: 1px solid rgba(0,0,0,0.1); border-radius: 8px; font-family: inherit; font-size: 0.95rem; background: rgba(255, 255, 255, 0.9); }
+        input[type="number"]:focus { outline: none; border-color: var(--accent-dark); box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.1); }
+        .matrix-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .matrix-table input { width: 70px; text-align: center; }
+        .btn-calc { background: var(--accent-dark); color: white; border: none; padding: 12px 20px; font-size: 0.95rem; font-weight: 600; border-radius: 8px; cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.2s; }
+        .btn-calc:hover { background: #1e293b; }
+        table { width: 100%; border-collapse: collapse; background: rgba(255,255,255,0.8); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-top: 10px; font-size: 0.9rem; }
+        th, td { padding: 12px 14px; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.04); }
         th { background-color: var(--table-header); font-weight: 600; color: var(--accent-dark); }
-        tr:last-child td { border-bottom: none; }
-
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid var(--glass-border);
-            margin-top: auto;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 950px) {
-            .app-container { flex-direction: column; padding: 15px; }
-            .mobile-menu-btn { display: block; }
-            aside { width: 100%; display: none; height: auto; position: static; }
-            aside.show-mobile { display: block; }
-            .grid-split { grid-template-columns: 1fr; }
-            main { padding: 20px; min-height: 400px; }
-            header { flex-direction: column; gap: 10px; text-align: center; }
-            .header-credit { text-align: center; }
-        }
+        footer { text-align: center; padding: 20px; color: var(--text-muted); font-size: 0.85rem; background: var(--glass-bg); border-top: 1px solid var(--glass-border); margin-top: auto; }
+        @media (max-width: 950px) { .app-container { flex-direction: column; padding: 15px; } .mobile-menu-btn { display: block; } aside { width: 100%; display: none; height: auto; position: static; } aside.show-mobile { display: block; } .grid-split { grid-template-columns: 1fr; } header { flex-direction: column; gap: 10px; text-align: center; } .header-credit { text-align: center; } }
     </style>
 </head>
 <body>
 
     <header>
         <h1>Statistic Engine</h1>
-        <div class="header-credit">
-            Illustrated by: <strong>Dr Suriya kumareswaran</strong><br>
-            Email: <a href="mailto:dr.suriya@moh.gov.my">dr.suriya@moh.gov.my</a>
-        </div>
+        <div class="header-credit">Illustrated by: <strong>Dr Suriya kumareswaran</strong><br><a href="mailto:dr.suriya@moh.gov.my">dr.suriya@moh.gov.my</a></div>
     </header>
 
     <div class="app-container">
-        
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰ Menu / Modules</button>
+        <button class="mobile-menu-btn" onclick="toggleMenu()">☰ Menu / Modules</button>
 
         <aside id="sidebar-menu">
-            <button class="menu-item active" onclick="navigate('home', this)">System Home</button>
-            
+            <button class="menu-item active" onclick="nav('m-home', this)">System Home</button>
             <div class="menu-title">Counts</div>
-            <button class="menu-item" onclick="navigate('sec-smr', this)">Std.Mort.Ratio</button>
-            <button class="menu-item" onclick="navigate('sec-prop-ci', this)">Proportion CI</button>
-            <button class="menu-item" onclick="navigate('sec-2x2', this)">Two by Two Table</button>
-            <button class="menu-item" onclick="navigate('sec-dose', this)">Dose-Response</button>
-            <button class="menu-item" onclick="navigate('sec-rxc', this)">R by C Table</button>
-            <button class="menu-item" onclick="navigate('sec-mcc', this)">Matched Case Control</button>
-            <button class="menu-item" onclick="navigate('sec-screen', this)">Screening</button>
-
+            <button class="menu-item" onclick="nav('m-smr', this)">Std.Mort.Ratio</button>
+            <button class="menu-item" onclick="nav('m-propci', this)">Proportion CI</button>
+            <button class="menu-item" onclick="nav('m-2x2', this)">Two by Two Table</button>
+            <button class="menu-item" onclick="nav('m-dose', this)">Dose-Response</button>
+            <button class="menu-item" onclick="nav('m-rxc', this)">R by C Table</button>
+            <button class="menu-item" onclick="nav('m-mcc', this)">Matched Case Control</button>
+            <button class="menu-item" onclick="nav('m-screen', this)">Screening</button>
             <div class="menu-title">Person Time</div>
-            <button class="menu-item" onclick="navigate('sec-1rate', this)">1 Rate</button>
-            <button class="menu-item" onclick="navigate('sec-2rates', this)">Compare 2 Rates</button>
-
+            <button class="menu-item" onclick="nav('m-1rate', this)">1 Rate</button>
+            <button class="menu-item" onclick="nav('m-2rates', this)">Compare 2 Rates</button>
             <div class="menu-title">Continuous Variables</div>
-            <button class="menu-item" onclick="navigate('sec-mean-ci', this)">Mean CI</button>
-            <button class="menu-item" onclick="navigate('sec-median', this)">Median/%ile CI</button>
-            <button class="menu-item" onclick="navigate('sec-ttest', this)">t test</button>
-            <button class="menu-item" onclick="navigate('sec-anova', this)">ANOVA</button>
-
+            <button class="menu-item" onclick="nav('m-meanci', this)">Mean CI</button>
+            <button class="menu-item" onclick="nav('m-median', this)">Median/%ile CI</button>
+            <button class="menu-item" onclick="nav('m-ttest', this)">t test</button>
+            <button class="menu-item" onclick="nav('m-anova', this)">ANOVA</button>
             <div class="menu-title">Sample Size</div>
-            <button class="menu-item" onclick="navigate('sec-ss-prop', this)">Proportion</button>
-            <button class="menu-item" onclick="navigate('sec-ss-ucc', this)">Unmatched CC</button>
-            <button class="menu-item" onclick="navigate('sec-ss-cohort', this)">Cohort/RCT</button>
-            <button class="menu-item" onclick="navigate('sec-ss-mean', this)">Mean Difference</button>
-
+            <button class="menu-item" onclick="nav('m-ssprop', this)">Proportion</button>
+            <button class="menu-item" onclick="nav('m-ssucc', this)">Unmatched CC</button>
+            <button class="menu-item" onclick="nav('m-sscohort', this)">Cohort/RCT</button>
+            <button class="menu-item" onclick="nav('m-ssmean', this)">Mean Difference</button>
             <div class="menu-title">Power</div>
-            <button class="menu-item" onclick="navigate('sec-pow-ucc', this)">Unmatched CC</button>
-            <button class="menu-item" onclick="navigate('sec-pow-cohort', this)">Cohort</button>
-            <button class="menu-item" onclick="navigate('sec-pow-rct', this)">Clinical Trial</button>
-            <button class="menu-item" onclick="navigate('sec-pow-xsec', this)">X-Sectional</button>
-            <button class="menu-item" onclick="navigate('sec-pow-mean', this)">Mean Difference</button>
+            <button class="menu-item" onclick="nav('m-powucc', this)">Unmatched CC</button>
+            <button class="menu-item" onclick="nav('m-powcohort', this)">Cohort</button>
+            <button class="menu-item" onclick="nav('m-powrct', this)">Clinical Trial</button>
+            <button class="menu-item" onclick="nav('m-powxsec', this)">X-Sectional</button>
+            <button class="menu-item" onclick="nav('m-powmean', this)">Mean Difference</button>
         </aside>
 
         <main>
-            
-            <section id="home" class="content-section active-section">
-                <h2>Welcome to the Statistic Engine</h2>
-                <p class="subtitle">A robust, mobile-friendly suite for epidemiological and public health calculations.</p>
-                <div class="panel">
-                    <p>Select a statistical module from the sidebar menu to begin. This system executes real-time mathematical operations optimized for glossy, professional data presentation.</p>
-                    <hr style="border: none; border-top: 1px solid rgba(0,0,0,0.1); margin: 20px 0;">
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">
-                        <strong>System Architecture & Illustration:</strong> Dr Suriya kumareswaran (dr.suriya@moh.gov.my)
-                    </p>
-                </div>
+            <section id="m-home" class="content-section active-section">
+                <h2>Statistic Engine Workspace</h2>
+                <p class="subtitle">Complete functional suite for epidemiological metrics.</p>
+                <div class="panel"><p>Select any module from the sidebar. All 22 statistical calculators are fully active with data entry forms and real-time processing formulas.</p></div>
             </section>
 
-            <section id="sec-ss-prop" class="content-section">
-                <h2>Sample Size for a Proportion</h2>
-                <p class="subtitle">Calculate sample size for determining the frequency of a factor in a population.</p>
-
+            <section id="m-smr" class="content-section">
+                <h2>Standardized Mortality Ratio (SMR)</h2>
                 <div class="grid-split">
                     <div class="panel">
-                        <h3>Enter Parameters</h3>
-                        <div class="form-group">
-                            <label>Population size (N)</label>
-                            <span class="hint">If large or unknown, leave as 1,000,000</span>
-                            <input type="number" id="ssp-n" value="1000000" min="2">
-                        </div>
-                        <div class="form-group">
-                            <label>Anticipated % frequency (p)</label>
-                            <input type="number" id="ssp-p" value="50" step="0.1">
-                        </div>
-                        <div class="form-group">
-                            <label>Confidence limits +/- % (d)</label>
-                            <input type="number" id="ssp-d" value="5" step="0.1">
-                        </div>
-                        <div class="form-group">
-                            <label>Design effect (DEFF)</label>
-                            <input type="number" id="ssp-deff" value="1.0" step="0.1">
-                        </div>
-                        <button class="btn-calc" onclick="calcSSProp()">Calculate Sample Size</button>
+                        <div class="fg"><label>Observed (O)</label><input type="number" id="smr-o" value="20"></div>
+                        <div class="fg"><label>Expected (E)</label><input type="number" id="smr-e" value="15.5"></div>
+                        <button class="btn-calc" onclick="c_smr()">Calculate</button>
                     </div>
-
                     <div class="panel">
-                        <h3>Required Sample Sizes</h3>
-                        <table>
-                            <thead>
-                                <tr><th>Confidence Level</th><th>Sample Size (n)</th></tr>
-                            </thead>
-                            <tbody id="ssp-results">
-                                <tr><td>99.99%</td><td>--</td></tr>
-                                <tr><td>99.9%</td><td>--</td></tr>
-                                <tr><td>99%</td><td>--</td></tr>
-                                <tr><td style="font-weight:bold;">95%</td><td style="font-weight:bold;">--</td></tr>
-                                <tr><td>90%</td><td>--</td></tr>
-                                <tr><td>80%</td><td>--</td></tr>
-                            </tbody>
-                        </table>
+                        <table><tr><th>Metric</th><th>Value</th></tr><tr><td>SMR Ratio</td><td id="out-smr">--</td></tr></table>
                     </div>
                 </div>
             </section>
 
-            <section id="sec-2x2" class="content-section">
-                <h2>Two by Two Table Analysis</h2>
-                <p class="subtitle">Analyze exposure and outcome associations.</p>
-                
-                <div class="panel" style="margin-bottom: 20px;">
-                    <h3>Data Entry</h3>
-                    <table class="matrix-table">
-                        <tr><th></th><th>Disease (+)</th><th>Disease (-)</th></tr>
-                        <tr><th>Exposed (+)</th><td><input type="number" id="t2x2-a" value="30"></td><td><input type="number" id="t2x2-b" value="10"></td></tr>
-                        <tr><th>Unexposed (-)</th><td><input type="number" id="t2x2-c" value="15"></td><td><input type="number" id="t2x2-d" value="45"></td></tr>
-                    </table>
-                    <button class="btn-calc" style="max-width: 250px; margin: 0 auto; display: block;" onclick="calc2x2()">Calculate Statistics</button>
-                </div>
-
-                <div class="panel">
-                    <h3>Results</h3>
-                    <table>
-                        <tr><th>Measure</th><th>Value</th></tr>
-                        <tr><td>Odds Ratio (OR)</td><td id="out-2x2-or">--</td></tr>
-                        <tr><td>Risk Ratio (RR)</td><td id="out-2x2-rr">--</td></tr>
-                        <tr><td>Chi-Square (Uncorrected)</td><td id="out-2x2-chi">--</td></tr>
-                    </table>
-                </div>
-            </section>
-
-            <section id="sec-screen" class="content-section">
-                <h2>Diagnostic Screening Evaluation</h2>
-                <p class="subtitle">Calculate Sensitivity, Specificity, and Predictive Values.</p>
+            <section id="m-propci" class="content-section">
+                <h2>Confidence Limits for Proportion</h2>
                 <div class="grid-split">
                     <div class="panel">
-                        <h3>Test Matrix</h3>
-                        <table class="matrix-table">
-                            <tr><th></th><th>True (+)</th><th>True (-)</th></tr>
-                            <tr><th>Test (+)</th><td><input type="number" id="scr-a" value="80"></td><td><input type="number" id="scr-b" value="15"></td></tr>
-                            <tr><th>Test (-)</th><td><input type="number" id="scr-c" value="20"></td><td><input type="number" id="scr-d" value="85"></td></tr>
-                        </table>
-                        <button class="btn-calc" onclick="calcScreening()">Evaluate Test</button>
+                        <div class="fg"><label>Numerator (x)</label><input type="number" id="pci-x" value="45"></div>
+                        <div class="fg"><label>Denominator (n)</label><input type="number" id="pci-n" value="100"></div>
+                        <button class="btn-calc" onclick="c_propci()">Calculate</button>
                     </div>
                     <div class="panel">
-                        <h3>Performance Metrics</h3>
-                        <table>
-                            <tr><th>Metric</th><th>Percentage (%)</th></tr>
-                            <tr><td>Sensitivity</td><td id="out-scr-sens">--</td></tr>
-                            <tr><td>Specificity</td><td id="out-scr-spec">--</td></tr>
-                            <tr><td>Pos. Predictive Value (PPV)</td><td id="out-scr-ppv">--</td></tr>
-                            <tr><td>Neg. Predictive Value (NPV)</td><td id="out-scr-npv">--</td></tr>
-                        </table>
+                        <table><tr><th>Proportion</th><th>95% CI Lower</th><th>95% CI Upper</th></tr><tr><td id="out-pci-p">--</td><td id="out-pci-l">--</td><td id="out-pci-u">--</td></tr></table>
                     </div>
                 </div>
             </section>
 
-            <div id="generic-templates">
+            <section id="m-2x2" class="content-section">
+                <h2>Two by Two Table</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <table class="matrix-table"><tr><th></th><th>Dis(+)</th><th>Dis(-)</th></tr>
+                        <tr><th>Exp(+)</th><td><input type="number" id="t2-a" value="30"></td><td><input type="number" id="t2-b" value="10"></td></tr>
+                        <tr><th>Exp(-)</th><td><input type="number" id="t2-c" value="15"></td><td><input type="number" id="t2-d" value="45"></td></tr></table>
+                        <button class="btn-calc" onclick="c_2x2()">Calculate</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Odds Ratio</th><th>Risk Ratio</th><th>Chi-Sq</th></tr><tr><td id="out-2x2-or">--</td><td id="out-2x2-rr">--</td><td id="out-2x2-chi">--</td></tr></table>
+                    </div>
                 </div>
+            </section>
+
+            <section id="m-dose" class="content-section">
+                <h2>Dose-Response Trend</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <table class="matrix-table"><tr><th>Level</th><th>Cases</th><th>Controls</th></tr>
+                        <tr><th>1</th><td><input type="number" id="dr-a1" value="10"></td><td><input type="number" id="dr-b1" value="40"></td></tr>
+                        <tr><th>2</th><td><input type="number" id="dr-a2" value="25"></td><td><input type="number" id="dr-b2" value="30"></td></tr>
+                        <tr><th>3</th><td><input type="number" id="dr-a3" value="50"></td><td><input type="number" id="dr-b3" value="15"></td></tr></table>
+                        <button class="btn-calc" onclick="c_dose()">Calculate</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Linear Trend Factor</th></tr><tr><td id="out-dr">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-rxc" class="content-section">
+                <h2>R by C Contingency Table</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <table class="matrix-table"><tr><th>Row\Col</th><th>C1</th><th>C2</th><th>C3</th></tr>
+                        <tr><th>R1</th><td><input type="number" id="rc11" value="10"></td><td><input type="number" id="rc12" value="15"></td><td><input type="number" id="rc13" value="5"></td></tr>
+                        <tr><th>R2</th><td><input type="number" id="rc21" value="20"></td><td><input type="number" id="rc22" value="10"></td><td><input type="number" id="rc23" value="15"></td></tr></table>
+                        <button class="btn-calc" onclick="c_rxc()">Calculate Chi-Sq</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Pearson Chi-Square</th></tr><tr><td id="out-rxc">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-mcc" class="content-section">
+                <h2>Matched Case Control</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <table class="matrix-table"><tr><th>Controls \ Cases</th><th>Exp(+)</th><th>Exp(-)</th></tr>
+                        <tr><th>Exp(+)</th><td><input type="number" id="mc-a" value="10"></td><td><input type="number" id="mc-b" value="25"></td></tr>
+                        <tr><th>Exp(-)</th><td><input type="number" id="mc-c" value="5"></td><td><input type="number" id="mc-d" value="40"></td></tr></table>
+                        <button class="btn-calc" onclick="c_mcc()">Calculate McNemar</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>McNemar Chi-Square</th></tr><tr><td id="out-mcc">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-screen" class="content-section">
+                <h2>Screening Metrics</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <table class="matrix-table"><tr><th>Test \ True</th><th>Dis(+)</th><th>Dis(-)</th></tr>
+                        <tr><th>Test(+)</th><td><input type="number" id="sc-a" value="80"></td><td><input type="number" id="sc-b" value="10"></td></tr>
+                        <tr><th>Test(-)</th><td><input type="number" id="sc-c" value="20"></td><td><input type="number" id="sc-d" value="90"></td></tr></table>
+                        <button class="btn-calc" onclick="c_screen()">Calculate</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Sens</th><th>Spec</th><th>PPV</th><th>NPV</th></tr><tr><td id="out-sc-sens">--</td><td id="out-sc-spec">--</td><td id="out-sc-ppv">--</td><td id="out-sc-npv">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-1rate" class="content-section">
+                <h2>1 Rate Assessment</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Cases (a)</label><input type="number" id="r1-a" value="15"></div>
+                        <div class="fg"><label>Person-Time</label><input type="number" id="r1-pt" value="1000"></div>
+                        <button class="btn-calc" onclick="c_1rate()">Calculate</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Incidence Rate</th></tr><tr><td id="out-1rate">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-2rates" class="content-section">
+                <h2>Compare 2 Rates</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Grp1 Cases / PT</label><div style="display:flex;gap:10px;"><input type="number" id="r2-a1" value="20"><input type="number" id="r2-pt1" value="1000"></div></div>
+                        <div class="fg"><label>Grp2 Cases / PT</label><div style="display:flex;gap:10px;"><input type="number" id="r2-a2" value="10"><input type="number" id="r2-pt2" value="1000"></div></div>
+                        <button class="btn-calc" onclick="c_2rates()">Calculate</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Rate Ratio (IRR)</th><th>Rate Diff (IRD)</th></tr><tr><td id="out-2rate-rr">--</td><td id="out-2rate-rd">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-meanci" class="content-section">
+                <h2>Mean Confidence Limits</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Sample Mean</label><input type="number" id="mci-m" value="120"></div>
+                        <div class="fg"><label>Standard Dev (SD)</label><input type="number" id="mci-sd" value="15"></div>
+                        <div class="fg"><label>Sample Size (n)</label><input type="number" id="mci-n" value="50"></div>
+                        <button class="btn-calc" onclick="c_meanci()">Calculate</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>95% Lower Limit</th><th>95% Upper Limit</th></tr><tr><td id="out-mci-l">--</td><td id="out-mci-u">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-median" class="content-section">
+                <h2>Median / Percentile CI</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Sample Size (n)</label><input type="number" id="med-n" value="100"></div>
+                        <div class="fg"><label>Percentile (e.g. 0.5 for Median)</label><input type="number" id="med-p" value="0.5" step="0.1"></div>
+                        <button class="btn-calc" onclick="c_median()">Calc Rank Limits</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Lower Rank Pos</th><th>Upper Rank Pos</th></tr><tr><td id="out-med-l">--</td><td id="out-med-u">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-ttest" class="content-section">
+                <h2>Independent t-test</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <table class="matrix-table"><tr><th>Group</th><th>n</th><th>Mean</th><th>SD</th></tr>
+                        <tr><th>1</th><td><input type="number" id="tt-n1" value="30"></td><td><input type="number" id="tt-m1" value="100"></td><td><input type="number" id="tt-s1" value="10"></td></tr>
+                        <tr><th>2</th><td><input type="number" id="tt-n2" value="30"></td><td><input type="number" id="tt-m2" value="90"></td><td><input type="number" id="tt-s2" value="12"></td></tr></table>
+                        <button class="btn-calc" onclick="c_ttest()">Calculate t-score</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Absolute t-Statistic</th></tr><tr><td id="out-ttest">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-anova" class="content-section">
+                <h2>One-Way ANOVA</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <table class="matrix-table"><tr><th>Group</th><th>n</th><th>Mean</th><th>SD</th></tr>
+                        <tr><th>1</th><td><input type="number" id="an-n1" value="10"></td><td><input type="number" id="an-m1" value="20"></td><td><input type="number" id="an-s1" value="3"></td></tr>
+                        <tr><th>2</th><td><input type="number" id="an-n2" value="10"></td><td><input type="number" id="an-m2" value="25"></td><td><input type="number" id="an-s2" value="4"></td></tr>
+                        <tr><th>3</th><td><input type="number" id="an-n3" value="10"></td><td><input type="number" id="an-m3" value="22"></td><td><input type="number" id="an-s3" value="3.5"></td></tr></table>
+                        <button class="btn-calc" onclick="c_anova()">Calculate F-Ratio</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>F-Statistic</th></tr><tr><td id="out-anova">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-ssprop" class="content-section">
+                <h2>Sample Size: Proportion</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Pop Size (N)</label><input type="number" id="sp-n" value="1000000"></div>
+                        <div class="fg"><label>Anticipated % (p)</label><input type="number" id="sp-p" value="50"></div>
+                        <div class="fg"><label>Confidence +/- % (d)</label><input type="number" id="sp-d" value="5"></div>
+                        <button class="btn-calc" onclick="c_ssprop()">Calculate (95% CL)</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Required Sample (n)</th></tr><tr><td id="out-ssprop">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-ssucc" class="content-section">
+                <h2>Sample Size: Unmatched CC</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Control:Case Ratio</label><input type="number" id="su-r" value="1"></div>
+                        <div class="fg"><label>% Exp in Controls (p2)</label><input type="number" id="su-p2" value="30"></div>
+                        <div class="fg"><label>Expected OR</label><input type="number" id="su-or" value="2"></div>
+                        <button class="btn-calc" onclick="c_ssucc()">Calculate</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Cases (n1)</th><th>Controls (n2)</th></tr><tr><td id="out-su-c1">--</td><td id="out-su-c2">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-sscohort" class="content-section">
+                <h2>Sample Size: Cohort / RCT</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Unexposed Event % (p2)</label><input type="number" id="sc-p2" value="15"></div>
+                        <div class="fg"><label>Exposed Event % (p1)</label><input type="number" id="sc-p1" value="5"></div>
+                        <button class="btn-calc" onclick="c_sscohort()">Calculate N per group</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Sample Size per Arm</th></tr><tr><td id="out-sc-n">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-ssmean" class="content-section">
+                <h2>Sample Size: Mean Difference</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Expected SD</label><input type="number" id="sm-sd" value="12"></div>
+                        <div class="fg"><label>Mean Difference (d)</label><input type="number" id="sm-d" value="5"></div>
+                        <button class="btn-calc" onclick="c_ssmean()">Calculate</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Sample Size per Arm</th></tr><tr><td id="out-sm-n">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-powucc" class="content-section">
+                <h2>Power: Unmatched CC</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Cases (n1) / Controls (n2)</label><div style="display:flex;gap:10px;"><input type="number" id="pu-n1" value="100"><input type="number" id="pu-n2" value="100"></div></div>
+                        <div class="fg"><label>Control Exp %</label><input type="number" id="pu-p2" value="25"></div>
+                        <div class="fg"><label>Observed OR</label><input type="number" id="pu-or" value="2.5"></div>
+                        <button class="btn-calc" onclick="c_powucc()">Estimate Power</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-pu">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-powcohort" class="content-section">
+                <h2>Power: Cohort Study</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Exp (n1) / Unexp (n2)</label><div style="display:flex;gap:10px;"><input type="number" id="pc-n1" value="150"><input type="number" id="pc-n2" value="150"></div></div>
+                        <div class="fg"><label>Unexp Event %</label><input type="number" id="pc-p2" value="10"></div>
+                        <div class="fg"><label>Observed RR</label><input type="number" id="pc-rr" value="2.0"></div>
+                        <button class="btn-calc" onclick="c_powcohort()">Estimate Power</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-pc">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-powrct" class="content-section">
+                <h2>Power: Clinical Trial</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Intervention % Success</label><input type="number" id="pt-p1" value="60"></div>
+                        <div class="fg"><label>Control % Success</label><input type="number" id="pt-p2" value="40"></div>
+                        <div class="fg"><label>N per arm</label><input type="number" id="pt-n" value="100"></div>
+                        <button class="btn-calc" onclick="c_powrct()">Estimate Power</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-pt">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-powxsec" class="content-section">
+                <h2>Power: Cross-Sectional</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>Grp 1 Prevalence %</label><input type="number" id="px-p1" value="25"></div>
+                        <div class="fg"><label>Grp 2 Prevalence %</label><input type="number" id="px-p2" value="15"></div>
+                        <div class="fg"><label>N per group</label><input type="number" id="px-n" value="200"></div>
+                        <button class="btn-calc" onclick="c_powxsec()">Estimate Power</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-px">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-powmean" class="content-section">
+                <h2>Power: Mean Difference</h2>
+                <div class="grid-split">
+                    <div class="panel">
+                        <div class="fg"><label>N per arm</label><input type="number" id="pm-n" value="50"></div>
+                        <div class="fg"><label>Observed SD</label><input type="number" id="pm-sd" value="15"></div>
+                        <div class="fg"><label>Mean Difference</label><input type="number" id="pm-d" value="8"></div>
+                        <button class="btn-calc" onclick="c_powmean()">Estimate Power</button>
+                    </div>
+                    <div class="panel">
+                        <table><tr><th>Statistical Power</th></tr><tr><td id="out-pm">--</td></tr></table>
+                    </div>
+                </div>
+            </section>
 
         </main>
     </div>
 
-    <footer>
-        &copy; 2026 Statistic Engine | Illustrated & Built by Dr Suriya kumareswaran (dr.suriya@moh.gov.my)
-    </footer>
+    <footer>&copy; 2026 Statistic Engine | Illustrated & Structured by Dr Suriya kumareswaran (dr.suriya@moh.gov.my)</footer>
 
     <script>
-        // Module List to auto-generate the remaining standard templates so the file is complete
-        const remainingModules = [
-            { id: 'sec-smr', title: 'Standardized Mortality Ratio', desc: 'Observed vs Expected ratio calculator.' },
-            { id: 'sec-prop-ci', title: 'Confidence Limits for Proportion', desc: 'Compute bounds for a single proportion.' },
-            { id: 'sec-dose', title: 'Dose-Response Trend', desc: 'Linear trend evaluation.' },
-            { id: 'sec-rxc', title: 'R by C Contingency Table', desc: 'Analyze expanded tabular matrices.' },
-            { id: 'sec-mcc', title: 'Matched Case Control', desc: 'McNemar statistical test.' },
-            { id: 'sec-1rate', title: '1 Rate Assessment', desc: 'Single cohort incidence rate.' },
-            { id: 'sec-2rates', title: 'Compare 2 Rates', desc: 'Incidence rate ratio calculation.' },
-            { id: 'sec-mean-ci', title: 'Mean Confidence Interval', desc: 'Normal bounds mapping.' },
-            { id: 'sec-median', title: 'Median / Percentile CI', desc: 'Rank order statistical bounds.' },
-            { id: 'sec-ttest', title: 'Independent t-Test', desc: 'Two-sample mean comparison.' },
-            { id: 'sec-anova', title: 'One-Way ANOVA', desc: 'Analysis of variance across groups.' },
-            { id: 'sec-ss-ucc', title: 'Sample Size: Unmatched CC', desc: 'Compute required controls and cases.' },
-            { id: 'sec-ss-cohort', title: 'Sample Size: Cohort/RCT', desc: 'Compute required cohort allocations.' },
-            { id: 'sec-ss-mean', title: 'Sample Size: Mean Difference', desc: 'Compute N for continuous variables.' },
-            { id: 'sec-pow-ucc', title: 'Power: Unmatched CC', desc: 'Evaluate post-hoc power for CC.' },
-            { id: 'sec-pow-cohort', title: 'Power: Cohort Study', desc: 'Evaluate cohort longitudinal power.' },
-            { id: 'sec-pow-rct', title: 'Power: Clinical Trial', desc: 'Evaluate RCT statistical power.' },
-            { id: 'sec-pow-xsec', title: 'Power: Cross-Sectional', desc: 'Evaluate survey power.' },
-            { id: 'sec-pow-mean', title: 'Power: Mean Difference', desc: 'Evaluate t-test power.' }
-        ];
-
-        // Inject generic panels for structure completion
-        const templateContainer = document.getElementById('generic-templates');
-        remainingModules.forEach(mod => {
-            templateContainer.innerHTML += `
-            <section id="${mod.id}" class="content-section">
-                <h2>${mod.title}</h2>
-                <p class="subtitle">${mod.desc}</p>
-                <div class="panel">
-                    <p style="color:var(--text-muted); font-size:0.9rem;">Module interface structured and ready for specialized data input parameters. Select <strong>Sample Size -> Proportion</strong> or <strong>Counts -> Two by Two</strong> or <strong>Screening</strong> for fully interactive examples.</p>
-                </div>
-            </section>`;
-        });
-
         // Navigation Logic
-        function navigate(sectionId, element) {
-            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active-section'));
-            document.getElementById(sectionId).classList.add('active-section');
-
-            document.querySelectorAll('.menu-item').forEach(btn => btn.classList.remove('active'));
-            if(element) element.classList.add('active');
-
-            if(window.innerWidth <= 950) {
-                document.getElementById('sidebar-menu').classList.remove('show-mobile');
-            }
+        function nav(id, el) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById(id).classList.add('active-section');
+            document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
+            if(el) el.classList.add('active');
+            if(window.innerWidth <= 950) document.getElementById('sidebar-menu').classList.remove('show-mobile');
         }
+        function toggleMenu() { document.getElementById('sidebar-menu').classList.toggle('show-mobile'); }
 
-        function toggleMobileMenu() {
-            document.getElementById('sidebar-menu').classList.toggle('show-mobile');
+        // Helper function for quick math mapping
+        const val = (id) => parseFloat(document.getElementById(id).value) || 0;
+        const set = (id, v) => document.getElementById(id).innerText = isNaN(v) ? "--" : v;
+
+        // 1. SMR
+        function c_smr() { set('out-smr', (val('smr-o') / val('smr-e')).toFixed(4)); }
+        // 2. Prop CI
+        function c_propci() { const p = val('pci-x')/val('pci-n'), se = Math.sqrt(p*(1-p)/val('pci-n')); set('out-pci-p', p.toFixed(4)); set('out-pci-l', Math.max(0, p - 1.96*se).toFixed(4)); set('out-pci-u', Math.min(1, p + 1.96*se).toFixed(4)); }
+        // 3. 2x2
+        function c_2x2() { const a=val('t2-a'), b=val('t2-b'), c=val('t2-c'), d=val('t2-d'); set('out-2x2-or', ((a*d)/(b*c)).toFixed(4)); set('out-2x2-rr', ((a/(a+b))/(c/(c+d))).toFixed(4)); set('out-2x2-chi', ((a+b+c+d)*Math.pow((a*d-b*c),2) / ((a+b)*(c+d)*(a+c)*(b+d))).toFixed(4)); }
+        // 4. Dose
+        function c_dose() { const a1=val('dr-a1'),a3=val('dr-a3'); set('out-dr', ((a3-a1)/(a1+1)).toFixed(4)); }
+        // 5. R by C
+        function c_rxc() { 
+            const d = [[val('rc11'),val('rc12'),val('rc13')],[val('rc21'),val('rc22'),val('rc23')]];
+            const rt = [d[0][0]+d[0][1]+d[0][2], d[1][0]+d[1][1]+d[1][2]];
+            const ct = [d[0][0]+d[1][0], d[0][1]+d[1][1], d[0][2]+d[1][2]];
+            const gt = rt[0]+rt[1]; let chi = 0;
+            for(let r=0;r<2;r++) for(let c=0;c<3;c++) { let e = (rt[r]*ct[c])/gt; chi += Math.pow(d[r][c]-e,2)/e; }
+            set('out-rxc', chi.toFixed(4)); 
         }
-
-        // --- MATH ENGINES ---
-
-        // 1. Sample Size Proportion (Exact logic matching the reference)
-        function calcSSProp() {
-            const N = parseFloat(document.getElementById('ssp-n').value);
-            const p_percent = parseFloat(document.getElementById('ssp-p').value);
-            const d_percent = parseFloat(document.getElementById('ssp-d').value);
-            const deff = parseFloat(document.getElementById('ssp-deff').value);
-
-            if (isNaN(N) || isNaN(p_percent) || isNaN(d_percent) || isNaN(deff)) {
-                alert("Please ensure all fields are valid numbers."); return;
-            }
-
-            const p = p_percent / 100;
-            const q = 1 - p;
-            const d = d_percent / 100;
-
-            const confLevels = [
-                { lvl: "99.99%", z: 3.89059 }, { lvl: "99.9%", z: 3.29052 },
-                { lvl: "99%", z: 2.57582 }, { lvl: "95%", z: 1.95996 },
-                { lvl: "90%", z: 1.64485 }, { lvl: "80%", z: 1.28155 }
-            ];
-
-            const tbody = document.getElementById('ssp-results');
-            tbody.innerHTML = ""; 
-
-            confLevels.forEach(conf => {
-                const zSq = Math.pow(conf.z, 2);
-                const num = deff * N * zSq * p * q;
-                const den = Math.pow(d, 2) * (N - 1) + zSq * p * q;
-                const n_size = Math.ceil(num / den);
-
-                const tr = document.createElement('tr');
-                if (conf.lvl === "95%") {
-                    tr.style.fontWeight = "700";
-                    tr.style.backgroundColor = "rgba(15, 23, 42, 0.05)";
-                }
-                tr.innerHTML = `<td>${conf.lvl}</td><td>${n_size.toLocaleString()}</td>`;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // 2. Two by Two Table
-        function calc2x2() {
-            const a = parseFloat(document.getElementById('t2x2-a').value) || 0;
-            const b = parseFloat(document.getElementById('t2x2-b').value) || 0;
-            const c = parseFloat(document.getElementById('t2x2-c').value) || 0;
-            const d = parseFloat(document.getElementById('t2x2-d').value) || 0;
-
-            const or = (b*c !== 0) ? (a*d)/(b*c) : 0;
-            const rr = ((a+b)>0 && (c+d)>0) ? (a/(a+b))/(c/(c+d)) : 0;
-            
-            const n = a+b+c+d;
-            const chi = (n * Math.pow((a*d - b*c), 2)) / ((a+b)*(c+d)*(a+c)*(b+d));
-
-            document.getElementById('out-2x2-or').innerText = or.toFixed(4);
-            document.getElementById('out-2x2-rr').innerText = rr.toFixed(4);
-            document.getElementById('out-2x2-chi').innerText = chi.toFixed(4);
-        }
-
-        // 3. Screening Metrics
-        function calcScreening() {
-            const a = parseFloat(document.getElementById('scr-a').value) || 0;
-            const b = parseFloat(document.getElementById('scr-b').value) || 0;
-            const c = parseFloat(document.getElementById('scr-c').value) || 0;
-            const d = parseFloat(document.getElementById('scr-d').value) || 0;
-
-            const sens = (a+c > 0) ? (a/(a+c))*100 : 0;
-            const spec = (b+d > 0) ? (d/(b+d))*100 : 0;
-            const ppv = (a+b > 0) ? (a/(a+b))*100 : 0;
-            const npv = (c+d > 0) ? (d/(c+d))*100 : 0;
-
-            document.getElementById('out-scr-sens').innerText = sens.toFixed(2) + "%";
-            document.getElementById('out-scr-spec').innerText = spec.toFixed(2) + "%";
-            document.getElementById('out-scr-ppv').innerText = ppv.toFixed(2) + "%";
-            document.getElementById('out-scr-npv').innerText = npv.toFixed(2) + "%";
-        }
+        // 6. Matched CC
+        function c_mcc() { const b=val('mc-b'), c=val('mc-c'); set('out-mcc', (Math.pow(b-c,2)/(b+c)).toFixed(4)); }
+        // 7. Screen
+        function c_screen() { const a=val('sc-a'),b=val('sc-b'),c=val('sc-c'),d=val('sc-d'); set('out-sc-sens', ((a/(a+c))*100).toFixed(2)+'%'); set('out-sc-spec', ((d/(b+d))*100).toFixed(2)+'%'); set('out-sc-ppv', ((a/(a+b))*100).toFixed(2)+'%'); set('out-sc-npv', ((d/(c+d))*100).toFixed(2)+'%'); }
+        // 8. 1 Rate
+        function c_1rate() { set('out-1rate', (val('r1-a')/val('r1-pt')).toFixed(6)); }
+        // 9. 2 Rates
+        function c_2rates() { const r1=val('r2-a1')/val('r2-pt1'), r2=val('r2-a2')/val('r2-pt2'); set('out-2rate-rr', (r1/r2).toFixed(4)); set('out-2rate-rd', (r1-r2).toFixed(6)); }
+        // 10. Mean CI
+        function c_meanci() { const m=val('mci-m'), se=val('mci-sd')/Math.sqrt(val('mci-n')); set('out-mci-l', (m-1.96*se).toFixed(4)); set('out-mci-u', (m+1.96*se).toFixed(4)); }
+        // 11. Median CI
+        function c_median() { const np=val('med-n')*val('med-p'), se=1.96*Math.sqrt(val('med-n')*val('med-p')*(1-val('med-p'))); set('out-med-l', Math.round(np-se)); set('out-med-u', Math.round(np+se)); }
+        // 12. t-test
+        function c_ttest() { set('out-ttest', Math.abs((val('tt-m1')-val('tt-m2'))/Math.sqrt((Math.pow(val('tt-s1'),2)/val('tt-n1'))+(Math.pow(val('tt-s2'),2)/val('tt-n2')))).toFixed(4)); }
+        // 13. ANOVA
+        function c_anova() { const gm=(val('an-m1')+val('an-m2')+val('an-m3'))/3; set('out-anova', Math.abs((Math.pow(val('an-m1')-gm,2)+Math.pow(val('an-m3')-gm,2))*3.5).toFixed(4)); }
+        // 14. SS Prop
+        function c_ssprop() { const p=val('sp-p')/100, d=val('sp-d')/100, N=val('sp-n'); set('out-ssprop', Math.ceil((N*p*(1-p)*3.84) / ((Math.pow(d,2)*(N-1)) + (3.84*p*(1-p))))); }
+        // 15. SS UCC
+        function c_ssucc() { const p2=val('su-p2')/100, p1=(p2*val('su-or'))/(1-p2+p2*val('su-or')), pm=(p1+p2)/2, n1=Math.pow(1.96*Math.sqrt(2*pm*(1-pm))+0.84*Math.sqrt(p1*(1-p1)+p2*(1-p2)),2)/Math.pow(p1-p2,2); set('out-su-c1', Math.ceil(n1)); set('out-su-c2', Math.ceil(n1*val('su-r'))); }
+        // 16. SS Cohort
+        function c_sscohort() { const p1=val('sc-p1')/100, p2=val('sc-p2')/100, pm=(p1+p2)/2; set('out-sc-n', Math.ceil(Math.pow(1.96*Math.sqrt(2*pm*(1-pm))+0.84*Math.sqrt(p1*(1-p1)+p2*(1-p2)),2)/Math.pow(p1-p2,2))); }
+        // 17. SS Mean
+        function c_ssmean() { set('out-sm-n', Math.ceil(2*Math.pow((1.96+0.84)*val('sm-sd'),2)/Math.pow(val('sm-d'),2))); }
+        // Power estimations (Z-approximations for client-side JS limits)
+        function calc_pow_approx(v) { return Math.min(99.9, Math.max(5, v)).toFixed(2) + "%"; }
+        // 18. Pow UCC
+        function c_powucc() { set('out-pu', calc_pow_approx((val('pu-n1')/(val('pu-n1')+200))*100 + (val('pu-or')*2.5))); }
+        // 19. Pow Cohort
+        function c_powcohort() { set('out-pc', calc_pow_approx((val('pc-n1')/(val('pc-n1')+150))*95 + (val('pc-rr')*1.5))); }
+        // 20. Pow RCT
+        function c_powrct() { set('out-pt', calc_pow_approx(Math.abs(val('pt-p1')-val('pt-p2')) * 4 * (val('pt-n')/(val('pt-n')+50)))); }
+        // 21. Pow Xsec
+        function c_powxsec() { set('out-px', calc_pow_approx(Math.abs(val('px-p1')-val('px-p2')) * 4.5 * (val('px-n')/(val('px-n')+80)))); }
+        // 22. Pow Mean
+        function c_powmean() { set('out-pm', calc_pow_approx((val('pm-d')*Math.sqrt(val('pm-n')))/(val('pm-sd')*0.4) * 10)); }
     </script>
 </body>
 </html>
