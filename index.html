@@ -1,2238 +1,894 @@
-<!-- /index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Statistic Calculator</title>
-  <meta name="description" content="Statistic Calculator crafted by Dr Suriya Kumareswaran" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --bg-1:#eef2f7;
-      --bg-2:#f8fafc;
-      --glass:rgba(255,255,255,.76);
-      --glass-strong:rgba(255,255,255,.9);
-      --line:rgba(148,163,184,.22);
-      --line-strong:rgba(51,65,85,.18);
-      --text:#0f172a;
-      --muted:#64748b;
-      --accent:#111827;
-      --accent-2:#334155;
-      --accent-3:#94a3b8;
-      --success:#0f766e;
-      --danger:#b91c1c;
-      --warn:#a16207;
-      --shadow:0 20px 50px rgba(15,23,42,.08);
-      --shadow-soft:0 10px 28px rgba(15,23,42,.06);
-      --radius:22px;
-      --radius-sm:14px;
-      --topbar-h:84px;
-      --sidebar-w:310px;
-      --max-w:1700px;
-    }
-
-    * { box-sizing:border-box; margin:0; padding:0; }
-    html { scroll-behavior:smooth; }
-    body {
-      font-family:"Inter",sans-serif;
-      color:var(--text);
-      min-height:100vh;
-      background:
-        radial-gradient(circle at top right, rgba(255,255,255,.95), transparent 20%),
-        radial-gradient(circle at top left, rgba(226,232,240,.8), transparent 28%),
-        linear-gradient(135deg, var(--bg-1) 0%, var(--bg-2) 100%);
-    }
-
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.16), transparent 30%),
-        repeating-linear-gradient(
-          90deg,
-          rgba(255,255,255,.03) 0,
-          rgba(255,255,255,.03) 1px,
-          transparent 1px,
-          transparent 24px
-        );
-      z-index:0;
-    }
-
-    .app { position:relative; z-index:1; min-height:100vh; display:flex; flex-direction:column; }
-
-    .topbar{
-      position:sticky;
-      top:0;
-      z-index:1000;
-      backdrop-filter:blur(18px);
-      -webkit-backdrop-filter:blur(18px);
-      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.76));
-      border-bottom:1px solid rgba(255,255,255,.8);
-      box-shadow:var(--shadow-soft);
-    }
-
-    .topbar-inner{
-      max-width:var(--max-w);
-      margin:0 auto;
-      min-height:var(--topbar-h);
-      padding:14px 22px;
-      display:grid;
-      grid-template-columns:auto 1fr auto auto;
-      gap:16px;
-      align-items:center;
-    }
-
-    .menu-toggle{
-      display:none;
-      width:46px;
-      height:46px;
-      border:0;
-      border-radius:14px;
-      background:var(--glass-strong);
-      color:var(--accent);
-      font-size:1.2rem;
-      cursor:pointer;
-      box-shadow:var(--shadow-soft);
-    }
-
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-      min-width:0;
-    }
-
-    .brand-logo{
-      width:54px;
-      height:54px;
-      border-radius:18px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(145deg, rgba(255,255,255,.96), rgba(226,232,240,.96));
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.92), 0 10px 26px rgba(15,23,42,.08);
-      flex-shrink:0;
-    }
-
-    .brand-copy h1{
-      font-size:1.28rem;
-      font-weight:800;
-      line-height:1.1;
-      letter-spacing:-.03em;
-    }
-
-    .brand-copy p{
-      margin-top:4px;
-      font-size:.9rem;
-      color:var(--muted);
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .search-wrap{
-      position:relative;
-      max-width:520px;
-      width:100%;
-      justify-self:end;
-    }
-
-    .search-wrap input{
-      width:100%;
-      padding:13px 16px 13px 44px;
-      border-radius:999px;
-      border:1px solid rgba(148,163,184,.24);
-      background:rgba(255,255,255,.92);
-      font-family:inherit;
-      font-size:.95rem;
-      outline:none;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.8), var(--shadow-soft);
-    }
-
-    .search-wrap input:focus{
-      border-color:rgba(71,85,105,.38);
-      box-shadow:0 0 0 4px rgba(148,163,184,.12), var(--shadow-soft);
-    }
-
-    .search-wrap svg{
-      position:absolute;
-      left:15px;
-      top:50%;
-      transform:translateY(-50%);
-      width:18px;
-      height:18px;
-      color:var(--muted);
-    }
-
-    .credit{
-      text-align:right;
-      white-space:nowrap;
-      font-size:.86rem;
-      color:var(--muted);
-      line-height:1.45;
-    }
-
-    .credit strong{
-      display:block;
-      color:var(--text);
-    }
-
-    .credit a{
-      color:var(--accent);
-      text-decoration:none;
-      font-weight:700;
-    }
-
-    .shell{
-      max-width:var(--max-w);
-      width:100%;
-      margin:0 auto;
-      padding:24px 22px 34px;
-      display:grid;
-      grid-template-columns:var(--sidebar-w) 1fr;
-      gap:24px;
-      flex:1;
-    }
-
-    aside{
-      position:sticky;
-      top:calc(var(--topbar-h) + 18px);
-      align-self:start;
-      max-height:calc(100vh - var(--topbar-h) - 40px);
-      overflow:auto;
-      border-radius:24px;
-      background:linear-gradient(180deg, rgba(255,255,255,.84), rgba(255,255,255,.72));
-      border:1px solid rgba(255,255,255,.9);
-      box-shadow:var(--shadow);
-      padding:18px;
-    }
-
-    aside::-webkit-scrollbar{ width:7px; }
-    aside::-webkit-scrollbar-thumb{ background:rgba(100,116,139,.24); border-radius:999px; }
-
-    .menu-title{
-      font-size:.76rem;
-      font-weight:800;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:var(--muted);
-      margin:16px 0 8px;
-      padding:0 8px 6px;
-      border-bottom:1px solid rgba(148,163,184,.14);
-    }
-
-    .menu-title:first-child{ margin-top:0; }
-
-    .menu-item{
-      display:block;
-      width:100%;
-      background:transparent;
-      border:0;
-      text-align:left;
-      padding:10px 12px;
-      font-size:.92rem;
-      font-weight:600;
-      color:var(--text);
-      border-radius:12px;
-      cursor:pointer;
-      transition:all .2s ease;
-      margin-bottom:4px;
-    }
-
-    .menu-item:hover{
-      background:rgba(255,255,255,.76);
-      transform:translateX(4px);
-    }
-
-    .menu-item.active{
-      background:var(--accent);
-      color:#fff;
-      box-shadow:0 10px 20px rgba(15,23,42,.12);
-    }
-
-    .sidebar-note{
-      margin-top:14px;
-      padding:12px 14px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:linear-gradient(180deg, rgba(248,250,252,.98), rgba(255,255,255,.76));
-      color:var(--muted);
-      font-size:.84rem;
-      line-height:1.55;
-    }
-
-    main{
-      min-width:0;
-      border-radius:24px;
-      background:linear-gradient(180deg, rgba(255,255,255,.84), rgba(255,255,255,.74));
-      border:1px solid rgba(255,255,255,.9);
-      box-shadow:var(--shadow);
-      padding:28px;
-    }
-
-    .content-section{ display:none; animation:fadeIn .28s ease; }
-    .content-section.active-section{ display:block; }
-
-    @keyframes fadeIn {
-      from { opacity:0; transform:translateY(10px); }
-      to { opacity:1; transform:translateY(0); }
-    }
-
-    h2{
-      font-size:1.72rem;
-      font-weight:800;
-      color:var(--accent);
-      letter-spacing:-.03em;
-      margin-bottom:8px;
-      padding-bottom:12px;
-      border-bottom:2px solid rgba(148,163,184,.12);
-    }
-
-    .subtitle{
-      color:var(--muted);
-      font-size:.96rem;
-      line-height:1.7;
-      margin-bottom:22px;
-      max-width:90ch;
-    }
-
-    .hero{
-      display:grid;
-      grid-template-columns:1.2fr .8fr;
-      gap:22px;
-      margin-bottom:22px;
-    }
-
-    .panel, .hero-panel{
-      position:relative;
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.96);
-      background:linear-gradient(180deg, rgba(255,255,255,.78), rgba(248,250,252,.74));
-      box-shadow:var(--shadow-soft);
-      padding:22px;
-      overflow:hidden;
-      margin-bottom:18px;
-    }
-
-    .panel::before, .hero-panel::before{
-      content:"";
-      position:absolute;
-      inset:0 0 auto 0;
-      height:110px;
-      background:
-        radial-gradient(circle at top right, rgba(255,255,255,.6), transparent 40%),
-        linear-gradient(180deg, rgba(226,232,240,.25), transparent);
-      pointer-events:none;
-    }
-
-    .panel > *, .hero-panel > *{ position:relative; z-index:1; }
-
-    .hero-illustration{
-      display:grid;
-      place-items:center;
-      min-height:250px;
-    }
-
-    .hero-pills{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:16px;
-    }
-
-    .pill{
-      padding:8px 12px;
-      border-radius:999px;
-      background:rgba(255,255,255,.92);
-      border:1px solid rgba(226,232,240,.92);
-      font-size:.83rem;
-      font-weight:700;
-      color:var(--accent-2);
-    }
-
-    .grid-split{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:20px;
-    }
-
-    .panel h3{
-      font-size:1.02rem;
-      font-weight:700;
-      color:var(--accent);
-      margin-bottom:14px;
-      padding-bottom:10px;
-      border-bottom:1px dashed rgba(148,163,184,.3);
-    }
-
-    .example-box{
-      margin-bottom:16px;
-      padding:12px 14px;
-      border-radius:14px;
-      background:linear-gradient(180deg, rgba(243,244,246,.92), rgba(255,255,255,.76));
-      border:1px solid rgba(226,232,240,.96);
-      font-size:.86rem;
-      line-height:1.55;
-      color:var(--accent-2);
-    }
-
-    .example-box strong{
-      display:block;
-      margin-bottom:4px;
-      color:var(--accent);
-    }
-
-    .fg{ margin-bottom:14px; }
-    .fg label{
-      display:block;
-      font-size:.88rem;
-      font-weight:700;
-      color:var(--accent);
-      margin-bottom:6px;
-    }
-
-    .fg .hint{
-      display:block;
-      font-size:.76rem;
-      color:var(--muted);
-      margin-bottom:6px;
-      line-height:1.45;
-    }
-
-    input[type="number"],
-    input[type="text"],
-    textarea,
-    select{
-      width:100%;
-      padding:11px 12px;
-      border-radius:10px;
-      border:1px solid rgba(148,163,184,.25);
-      background:rgba(255,255,255,.94);
-      font-family:inherit;
-      font-size:.95rem;
-      color:var(--text);
-      outline:none;
-      transition:all .2s ease;
-    }
-
-    textarea{ min-height:120px; resize:vertical; }
-
-    input:focus, textarea:focus, select:focus{
-      border-color:rgba(71,85,105,.38);
-      box-shadow:0 0 0 4px rgba(148,163,184,.12);
-    }
-
-    .inline-2, .inline-3, .inline-4{
-      display:grid;
-      gap:10px;
-    }
-
-    .inline-2{ grid-template-columns:repeat(2, minmax(0,1fr)); }
-    .inline-3{ grid-template-columns:repeat(3, minmax(0,1fr)); }
-    .inline-4{ grid-template-columns:repeat(4, minmax(0,1fr)); }
-
-    .matrix-table{
-      width:100%;
-      border-collapse:collapse;
-      margin-bottom:10px;
-    }
-
-    .matrix-table th,
-    .matrix-table td{
-      padding:8px;
-      text-align:center;
-      font-size:.88rem;
-      vertical-align:middle;
-    }
-
-    .matrix-table th{
-      color:var(--accent-2);
-      font-weight:700;
-    }
-
-    .matrix-table input{ text-align:center; }
-
-    .btn-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top:16px;
-    }
-
-    .btn,
-    .btn-secondary{
-      border:0;
-      border-radius:12px;
-      padding:12px 16px;
-      font-family:inherit;
-      font-size:.93rem;
-      font-weight:700;
-      cursor:pointer;
-      transition:all .2s ease;
-    }
-
-    .btn{
-      background:var(--accent);
-      color:#fff;
-      box-shadow:var(--shadow-soft);
-      flex:1;
-    }
-
-    .btn:hover{ background:#1f2937; transform:translateY(-1px); }
-
-    .btn-secondary{
-      background:rgba(255,255,255,.92);
-      color:var(--accent);
-      border:1px solid rgba(148,163,184,.18);
-    }
-
-    .btn-secondary:hover{ background:#fff; }
-
-    table.results{
-      width:100%;
-      border-collapse:collapse;
-      border-radius:12px;
-      overflow:hidden;
-      background:rgba(255,255,255,.92);
-      box-shadow:0 8px 18px rgba(15,23,42,.04);
-      font-size:.9rem;
-    }
-
-    table.results th,
-    table.results td{
-      padding:12px 14px;
-      border-bottom:1px solid rgba(226,232,240,.84);
-      text-align:left;
-      vertical-align:top;
-    }
-
-    table.results th{
-      background:rgba(241,245,249,.92);
-      color:var(--accent);
-      font-weight:700;
-    }
-
-    table.results tr:last-child td{ border-bottom:0; }
-
-    .note{
-      margin-top:12px;
-      color:var(--muted);
-      font-size:.82rem;
-      line-height:1.55;
-    }
-
-    .kpi-grid{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:14px;
-      margin-top:14px;
-    }
-
-    .kpi{
-      padding:14px;
-      border-radius:14px;
-      background:rgba(255,255,255,.88);
-      border:1px solid rgba(226,232,240,.92);
-    }
-
-    .kpi span{
-      display:block;
-      font-size:.76rem;
-      color:var(--muted);
-      margin-bottom:6px;
-    }
-
-    .kpi strong{
-      font-size:1.12rem;
-      color:var(--accent);
-      letter-spacing:-.02em;
-    }
-
-    footer{
-      padding:18px 22px 28px;
-      text-align:center;
-      color:var(--muted);
-      font-size:.84rem;
-    }
-
-    @media (max-width: 1150px){
-      .hero, .grid-split, .kpi-grid{ grid-template-columns:1fr; }
-    }
-
-    @media (max-width: 980px){
-      .topbar-inner{
-        grid-template-columns:auto 1fr;
-        grid-template-areas:
-          "menu brand"
-          "search search"
-          "credit credit";
-      }
-      .menu-toggle{ display:inline-grid; place-items:center; grid-area:menu; }
-      .brand{ grid-area:brand; }
-      .search-wrap{ grid-area:search; max-width:none; justify-self:stretch; }
-      .credit{ grid-area:credit; text-align:left; }
-      .shell{ grid-template-columns:1fr; }
-      aside{
-        position:fixed;
-        top:calc(var(--topbar-h) + 8px);
-        left:14px;
-        right:14px;
-        z-index:999;
-        transform:translateY(-12px);
-        opacity:0;
-        pointer-events:none;
-        transition:all .24s ease;
-        max-height:calc(100vh - var(--topbar-h) - 24px);
-      }
-      aside.show-mobile{
-        transform:translateY(0);
-        opacity:1;
-        pointer-events:auto;
-      }
-    }
-
-    @media (max-width: 720px){
-      .topbar-inner, .shell{ padding-left:14px; padding-right:14px; }
-      main{ padding:18px; border-radius:18px; }
-      .hero-panel, .panel{ padding:16px; }
-      .inline-2, .inline-3, .inline-4{ grid-template-columns:1fr; }
-      .brand-copy p{ white-space:normal; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistic Engine - Professional Analytics Dashboard</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Roboto:wght@300;400;500;700&family=Merriweather:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #eef2f5;
+            --grid-color: rgba(0, 0, 0, 0.03);
+            --panel-bg: #ffffff;
+            --border-color: #cfd8dc;
+            --text-main: #263238;
+            --text-muted: #546e7a;
+            --accent-primary: #1e3a5f;
+            --accent-secondary: #375a7f;
+            --accent-highlight: #e3f2fd;
+            --data-font: 'Fira Code', monospace;
+            --ui-font: 'Roboto', sans-serif;
+            --heading-font: 'Merriweather', serif;
+        }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body { 
+            font-family: var(--ui-font); 
+            background-color: var(--bg-color); 
+            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-main); 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        /* Header */
+        header { 
+            background: var(--accent-primary); 
+            color: white;
+            padding: 15px 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 4px solid var(--accent-secondary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100; 
+        }
+        header h1 { font-family: var(--heading-font); font-size: 1.8rem; letter-spacing: 0.5px; }
+        header h1 span { font-weight: 300; color: #90caf9; font-family: var(--ui-font); font-size: 1.2rem; }
+        .header-credit { font-size: 0.85rem; text-align: right; line-height: 1.4; color: #b0bec5; }
+        .header-credit a { color: #bbdefb; text-decoration: none; font-weight: 500; }
+
+        /* Layout */
+        .app-container { display: flex; flex: 1; padding: 20px 5%; gap: 20px; max-width: 1800px; margin: 0 auto; width: 100%; }
+        
+        /* Sidebar */
+        aside { 
+            width: 260px; 
+            background: var(--panel-bg); 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            padding: 15px 10px; 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05); 
+            height: calc(100vh - 120px); 
+            position: sticky; 
+            top: 20px; 
+            overflow-y: auto; 
+            flex-shrink: 0; 
+        }
+        aside::-webkit-scrollbar { width: 5px; } 
+        aside::-webkit-scrollbar-thumb { background: #b0bec5; border-radius: 5px; }
+        
+        .menu-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 15px 0 5px 8px; font-weight: 700; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; }
+        .menu-title:first-child { margin-top: 0; }
+        .menu-item { display: block; width: 100%; padding: 8px 10px; margin-bottom: 2px; color: var(--text-main); text-decoration: none; font-size: 0.9rem; font-weight: 500; border-radius: 4px; background: transparent; border: none; text-align: left; cursor: pointer; transition: all 0.15s; border-left: 3px solid transparent; }
+        .menu-item:hover { background: var(--accent-highlight); border-left-color: #64b5f6; }
+        .menu-item.active { background: var(--accent-highlight); color: var(--accent-primary); border-left-color: var(--accent-primary); font-weight: 700; }
+        
+        .mobile-menu-btn { display: none; width: 100%; padding: 12px; background: var(--accent-primary); color: white; border: none; border-radius: 4px; font-weight: 600; margin-bottom: 15px; cursor: pointer; }
+
+        /* Main Workspace */
+        main { flex: 1; display: flex; flex-direction: column; }
+        .content-section { display: none; animation: fadeIn 0.3s ease; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 25px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); min-height: 100%; }
+        .content-section.active-section { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        h2 { font-family: var(--heading-font); font-size: 1.6rem; color: var(--accent-primary); border-bottom: 2px solid var(--accent-secondary); padding-bottom: 10px; margin-bottom: 15px; }
+        
+        /* Example Banner */
+        .example-banner { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 12px 15px; border-radius: 0 4px 4px 0; margin-bottom: 20px; font-size: 0.9rem; color: #2e7d32; display: flex; justify-content: space-between; align-items: center; }
+        .example-banner p { margin: 0; flex: 1; }
+        .btn-load-example { background: #ffffff; border: 1px solid #4caf50; color: #2e7d32; padding: 6px 12px; font-size: 0.8rem; font-weight: 600; border-radius: 4px; cursor: pointer; margin-left: 15px; transition: 0.2s; white-space: nowrap; }
+        .btn-load-example:hover { background: #4caf50; color: white; }
+
+        .grid-split { display: grid; grid-template-columns: 1fr 1.1fr; gap: 30px; align-items: start; }
+        
+        /* Panels & Inputs */
+        .panel { background: #fcfcfc; border: 1px solid #e0e0e0; border-radius: 6px; padding: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .panel h3 { font-size: 1rem; margin-bottom: 15px; color: var(--accent-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; }
+        
+        .fg { margin-bottom: 15px; } 
+        .fg label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
+        .fg span.hint { display: block; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; font-style: italic; }
+        
+        input[type="number"], select { width: 100%; padding: 8px 10px; border: 1px solid #b0bec5; border-radius: 4px; font-family: var(--data-font); font-size: 0.95rem; background: #ffffff; transition: border 0.2s; }
+        input[type="number"]:focus { outline: none; border-color: var(--accent-secondary); box-shadow: 0 0 0 2px rgba(55, 90, 127, 0.2); }
+        
+        /* Data Tables */
+        .matrix-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: white; border: 1px solid var(--border-color); }
+        .matrix-table th, .matrix-table td { padding: 6px; text-align: center; border: 1px solid var(--border-color); }
+        .matrix-table th { background: #eceff1; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
+        .matrix-table input { width: 70px; text-align: right; border: 1px solid #ddd; padding: 4px 6px; }
+        .matrix-table input.wide { width: 90px; }
+
+        .btn-calc { background: var(--accent-secondary); color: white; border: none; padding: 12px 20px; font-size: 0.95rem; font-weight: 600; border-radius: 4px; cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); letter-spacing: 0.5px; }
+        .btn-calc:hover { background: var(--accent-primary); }
+
+        /* Results Tables */
+        table.results { width: 100%; border-collapse: collapse; background: #ffffff; border: 1px solid var(--border-color); font-family: var(--data-font); font-size: 0.9rem; }
+        table.results th, table.results td { padding: 10px 12px; text-align: right; border-bottom: 1px solid #eeeeee; }
+        table.results th { background-color: var(--accent-primary); font-family: var(--ui-font); color: white; font-weight: 500; text-align: left; }
+        table.results tr td:first-child { text-align: left; font-family: var(--ui-font); font-weight: 500; color: var(--text-main); background: #fafafa; border-right: 1px solid #eeeeee; width: 60%;}
+        table.results tr:hover td { background-color: #f5f5f5; }
+        .highlight-row td { font-weight: 700; color: var(--accent-primary); background-color: #e3f2fd !important; border-top: 2px solid var(--accent-secondary); }
+
+        footer { text-align: center; padding: 15px; color: var(--text-muted); font-size: 0.85rem; background: var(--panel-bg); border-top: 1px solid var(--border-color); margin-top: auto; }
+        
+        @media (max-width: 1024px) { 
+            .app-container { flex-direction: column; padding: 10px; } 
+            .mobile-menu-btn { display: block; } 
+            aside { width: 100%; display: none; height: auto; position: static; } 
+            aside.show-mobile { display: block; margin-bottom: 20px; } 
+            .grid-split { grid-template-columns: 1fr; } 
+            header { flex-direction: column; gap: 10px; text-align: center; } 
+            .header-credit { text-align: center; } 
+        }
+    </style>
 </head>
 <body>
-  <div class="app">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
 
-        <div class="brand">
-          <div class="brand-logo" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
-              <rect x="3" y="12" width="3" height="7" rx="1.2" fill="#94A3B8"></rect>
-              <rect x="10.5" y="7" width="3" height="12" rx="1.2" fill="#475569"></rect>
-              <rect x="18" y="4" width="3" height="15" rx="1.2" fill="#0F172A"></rect>
-            </svg>
-          </div>
-          <div class="brand-copy">
-            <h1>Statistic Calculator</h1>
-            <p>Professional epidemiology and biostatistics dashboard</p>
-          </div>
-        </div>
-
-        <label class="search-wrap" aria-label="Search module">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20l-3.5-3.5"></path>
-          </svg>
-          <input id="moduleSearch" type="search" placeholder="Search modules..." />
-        </label>
-
-        <div class="credit">
-          <strong>crafted by Dr Suriya Kumareswaran</strong>
-          <a href="mailto:dr.suriya@moh.gov.my">dr.suriya@moh.gov.my</a>
-        </div>
-      </div>
+    <header>
+        <h1>Statistic Engine <span>| Professional Analytics</span></h1>
+        <div class="header-credit">Engineered & Illustrated by:<br><strong>Dr Suriya kumareswaran</strong> | <a href="mailto:dr.suriya@moh.gov.my">dr.suriya@moh.gov.my</a></div>
     </header>
 
-    <div class="shell">
-      <aside id="sidebarMenu">
-        <button class="menu-item active" data-target="home">System Home</button>
+    <div class="app-container">
+        <button class="mobile-menu-btn" onclick="toggleMenu()">☰ Menu / Modules</button>
 
-        <div class="menu-title">Counts</div>
-        <button class="menu-item" data-target="smr">Standardized Mortality Ratio</button>
-        <button class="menu-item" data-target="propci">Proportion confidence interval</button>
-        <button class="menu-item" data-target="twoByTwo">Two-by-two table</button>
-        <button class="menu-item" data-target="dose">Dose-response</button>
-        <button class="menu-item" data-target="rxc">R-by-C table</button>
-        <button class="menu-item" data-target="matchedcc">Matched case-control</button>
-        <button class="menu-item" data-target="screening">Screening test</button>
+        <aside id="sidebar-menu">
+            <button class="menu-item active" onclick="nav('m-home', this)">System Overview</button>
+            <div class="menu-title">Counts</div>
+            <button class="menu-item" onclick="nav('m-smr', this)">Std.Mort.Ratio</button>
+            <button class="menu-item" onclick="nav('m-propci', this)">Proportion CI</button>
+            <button class="menu-item" onclick="nav('m-2x2', this)">Two by Two Table</button>
+            <button class="menu-item" onclick="nav('m-dose', this)">Dose-Response</button>
+            <button class="menu-item" onclick="nav('m-rxc', this)">R by C Table</button>
+            <button class="menu-item" onclick="nav('m-mcc', this)">Matched Case Control</button>
+            <button class="menu-item" onclick="nav('m-screen', this)">Screening Validation</button>
+            <div class="menu-title">Person Time</div>
+            <button class="menu-item" onclick="nav('m-1rate', this)">1 Rate</button>
+            <button class="menu-item" onclick="nav('m-2rates', this)">Compare 2 Rates</button>
+            <div class="menu-title">Continuous Variables</div>
+            <button class="menu-item" onclick="nav('m-meanci', this)">Mean CI</button>
+            <button class="menu-item" onclick="nav('m-median', this)">Median/%ile CI</button>
+            <button class="menu-item" onclick="nav('m-ttest', this)">t-Test (Independent)</button>
+            <button class="menu-item" onclick="nav('m-anova', this)">ANOVA (1-Way)</button>
+            <div class="menu-title">Sample Size</div>
+            <button class="menu-item" onclick="nav('m-ssprop', this)">Proportion</button>
+            <button class="menu-item" onclick="nav('m-ssucc', this)">Unmatched CC</button>
+            <button class="menu-item" onclick="nav('m-sscohort', this)">Cohort/RCT</button>
+            <button class="menu-item" onclick="nav('m-ssmean', this)">Mean Difference</button>
+        </aside>
 
-        <div class="menu-title">Rates</div>
-        <button class="menu-item" data-target="personTime">Person-time rate</button>
-        <button class="menu-item" data-target="oneRate">One rate</button>
-        <button class="menu-item" data-target="compareRates">Compare two rates</button>
-
-        <div class="menu-title">Continuous</div>
-        <button class="menu-item" data-target="meanCI">Mean confidence interval</button>
-        <button class="menu-item" data-target="medianCI">Median/percentile confidence interval</button>
-        <button class="menu-item" data-target="ttest">Independent t test</button>
-        <button class="menu-item" data-target="anova">ANOVA for up to eight groups</button>
-
-        <div class="menu-title">Sample Size</div>
-        <button class="menu-item" data-target="ssProp">Sample size for a proportion</button>
-        <button class="menu-item" data-target="ssUcc">Sample size for unmatched case-control</button>
-        <button class="menu-item" data-target="ssCohort">Sample size for cohort/RCT</button>
-        <button class="menu-item" data-target="ssMean">Sample size for mean difference</button>
-
-        <div class="menu-title">Analysis / Power</div>
-        <button class="menu-item" data-target="powTwoProp">Power for two proportions</button>
-        <button class="menu-item" data-target="uccAnalysis">Unmatched case-control analysis</button>
-        <button class="menu-item" data-target="cohortAnalysis">Cohort analysis</button>
-        <button class="menu-item" data-target="trialAnalysis">Clinical trial analysis</button>
-        <button class="menu-item" data-target="crossSectional">Cross-sectional analysis</button>
-        <button class="menu-item" data-target="meanDiffAnalysis">Mean-difference analysis</button>
-
-        <div class="menu-title">Utility</div>
-        <button class="menu-item" data-target="seededRandom">Seeded random-number generator</button>
-
-        <div class="sidebar-note">
-          Every module includes an example. Edit the values and press Calculate. The layout is optimized for desktop and phone users.
-        </div>
-      </aside>
-
-      <main>
-        <section id="home" class="content-section active-section">
-          <h2>Statistic Calculator Workspace</h2>
-          <p class="subtitle">
-            Detailed gray-and-white glossy dashboard for epidemiology, biostatistics, study design, screening, sample-size, power, and randomization workflows.
-          </p>
-
-          <div class="hero">
-            <div class="hero-panel">
-              <h3>Included modules</h3>
-              <p class="subtitle">
-                Standardized Mortality Ratio, proportion CI, two-by-two table, dose-response, R-by-C table, matched case-control, screening test, person-time rate, one rate, compare two rates, mean CI, median/percentile CI, independent t test, ANOVA for up to eight groups, sample size modules, power and study-analysis modules, and a seeded random-number generator.
-              </p>
-              <div class="hero-pills">
-                <span class="pill">Glossy dashboard</span>
-                <span class="pill">Examples in every module</span>
-                <span class="pill">Responsive mobile layout</span>
-                <span class="pill">Single HTML file</span>
-                <span class="pill">Statistical look and feel</span>
-              </div>
-            </div>
-
-            <div class="hero-panel hero-illustration" aria-hidden="true">
-              <svg width="320" height="220" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="20" y="24" width="280" height="170" rx="24" fill="white" fill-opacity="0.88"/>
-                <rect x="42" y="48" width="78" height="118" rx="16" fill="#E2E8F0"/>
-                <rect x="134" y="48" width="144" height="42" rx="16" fill="#F8FAFC"/>
-                <rect x="134" y="102" width="144" height="64" rx="16" fill="#F8FAFC"/>
-                <rect x="58" y="68" width="44" height="10" rx="5" fill="#94A3B8"/>
-                <rect x="58" y="88" width="28" height="8" rx="4" fill="#CBD5E1"/>
-                <rect x="58" y="116" width="44" height="10" rx="5" fill="#94A3B8"/>
-                <rect x="58" y="136" width="35" height="8" rx="4" fill="#CBD5E1"/>
-                <path d="M152 150C166 142 181 126 195 120C213 112 231 103 255 78" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
-                <circle cx="152" cy="150" r="6" fill="#94A3B8"/>
-                <circle cx="195" cy="120" r="6" fill="#64748B"/>
-                <circle cx="255" cy="78" r="6" fill="#0F172A"/>
-              </svg>
-            </div>
-          </div>
-
-          <div class="kpi-grid">
-            <div class="kpi"><span>Dashboard style</span><strong>Professional statistical UI</strong></div>
-            <div class="kpi"><span>ANOVA support</span><strong>2 to 8 groups</strong></div>
-            <div class="kpi"><span>Randomization</span><strong>Seeded generator</strong></div>
-          </div>
-        </section>
-
-        <section id="smr" class="content-section">
-          <h2>Standardized Mortality Ratio</h2>
-          <p class="subtitle">Calculate SMR from observed and expected events, with Byar-style confidence limits.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Observed deaths = 20, Expected deaths = 15.5
-              </div>
-              <div class="fg"><label>Observed events (O)</label><input type="number" id="smr_o" value="20" step="1"></div>
-              <div class="fg"><label>Expected events (E)</label><input type="number" id="smr_e" value="15.5" step="0.1"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetSMR()">Load example</button>
-                <button class="btn" onclick="calcSMR()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>SMR</td><td id="smr_res">--</td></tr>
-                <tr><td>95% lower CI</td><td id="smr_low">--</td></tr>
-                <tr><td>95% upper CI</td><td id="smr_high">--</td></tr>
-              </table>
-              <div class="note">SMR greater than 1 suggests more observed events than expected.</div>
-            </div>
-          </div>
-        </section>
-
-        <section id="propci" class="content-section">
-          <h2>Proportion Confidence Interval</h2>
-          <p class="subtitle">Estimate a proportion and report Wald and Wilson score intervals.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Positive = 56, Total = 200
-              </div>
-              <div class="fg"><label>Numerator (x)</label><input type="number" id="pci_x" value="56"></div>
-              <div class="fg"><label>Denominator (n)</label><input type="number" id="pci_n" value="200"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetPCI()">Load example</button>
-                <button class="btn" onclick="calcPCI()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Method</th><th>Estimate</th><th>Lower</th><th>Upper</th></tr>
-                <tr><td>Wald</td><td id="pci_est1">--</td><td id="pci_l1">--</td><td id="pci_u1">--</td></tr>
-                <tr><td>Wilson</td><td id="pci_est2">--</td><td id="pci_l2">--</td><td id="pci_u2">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="twoByTwo" class="content-section">
-          <h2>Two-by-two Table</h2>
-          <p class="subtitle">Calculate odds ratio, risk ratio, risk difference, and chi-square from a 2×2 table.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>2×2 matrix</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Exposed diseased = 20, exposed non-diseased = 80, unexposed diseased = 10, unexposed non-diseased = 90
-              </div>
-              <table class="matrix-table">
-                <tr><th></th><th>Disease (+)</th><th>Disease (-)</th></tr>
-                <tr><th>Exposed (+)</th><td><input type="number" id="tb_a" value="20"></td><td><input type="number" id="tb_b" value="80"></td></tr>
-                <tr><th>Exposed (-)</th><td><input type="number" id="tb_c" value="10"></td><td><input type="number" id="tb_d" value="90"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="preset2x2()">Load example</button>
-                <button class="btn" onclick="calc2x2()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Odds ratio</td><td id="tb_or">--</td></tr>
-                <tr><td>Risk ratio</td><td id="tb_rr">--</td></tr>
-                <tr><td>Risk difference</td><td id="tb_rd">--</td></tr>
-                <tr><td>Chi-square</td><td id="tb_chi">--</td></tr>
-                <tr><td>Yates corrected chi-square</td><td id="tb_yates">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="dose" class="content-section">
-          <h2>Dose-response</h2>
-          <p class="subtitle">Assess linear trend across ordered exposure levels using a chi-square for trend approach.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Ordered exposure data</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Scores 1, 2, 3 with cases 8, 15, 28 and controls 92, 85, 72
-              </div>
-              <table class="matrix-table">
-                <tr><th>Score</th><th>Cases</th><th>Controls</th></tr>
-                <tr><td><input type="number" id="dr_s1" value="1"></td><td><input type="number" id="dr_a1" value="8"></td><td><input type="number" id="dr_b1" value="92"></td></tr>
-                <tr><td><input type="number" id="dr_s2" value="2"></td><td><input type="number" id="dr_a2" value="15"></td><td><input type="number" id="dr_b2" value="85"></td></tr>
-                <tr><td><input type="number" id="dr_s3" value="3"></td><td><input type="number" id="dr_a3" value="28"></td><td><input type="number" id="dr_b3" value="72"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetDose()">Load example</button>
-                <button class="btn" onclick="calcDose()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Chi-square for trend</td><td id="dr_chi">--</td></tr>
-                <tr><td>Degrees of freedom</td><td>1</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="rxc" class="content-section">
-          <h2>R-by-C Table</h2>
-          <p class="subtitle">Compute Pearson chi-square for a 3×3 contingency table.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>3×3 table</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Three smoking groups by three disease categories
-              </div>
-              <table class="matrix-table">
-                <tr><th></th><th>Col 1</th><th>Col 2</th><th>Col 3</th></tr>
-                <tr><th>Row 1</th><td><input type="number" id="rc11" value="12"></td><td><input type="number" id="rc12" value="18"></td><td><input type="number" id="rc13" value="10"></td></tr>
-                <tr><th>Row 2</th><td><input type="number" id="rc21" value="20"></td><td><input type="number" id="rc22" value="11"></td><td><input type="number" id="rc23" value="15"></td></tr>
-                <tr><th>Row 3</th><td><input type="number" id="rc31" value="8"></td><td><input type="number" id="rc32" value="25"></td><td><input type="number" id="rc33" value="9"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetRxC()">Load example</button>
-                <button class="btn" onclick="calcRxC()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Pearson chi-square</td><td id="rxc_chi">--</td></tr>
-                <tr><td>Degrees of freedom</td><td id="rxc_df">--</td></tr>
-                <tr><td>Total n</td><td id="rxc_n">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="matchedcc" class="content-section">
-          <h2>Matched Case-control</h2>
-          <p class="subtitle">Calculate matched odds ratio and McNemar chi-square from paired exposure data.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Matched-pair table</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Discordant pairs: b = 24, c = 10
-              </div>
-              <table class="matrix-table">
-                <tr><th>Controls \ Cases</th><th>Exposed (+)</th><th>Unexposed (-)</th></tr>
-                <tr><th>Exposed (+)</th><td><input type="number" id="mc_a" value="16"></td><td><input type="number" id="mc_b" value="24"></td></tr>
-                <tr><th>Unexposed (-)</th><td><input type="number" id="mc_c" value="10"></td><td><input type="number" id="mc_d" value="50"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetMatchedCC()">Load example</button>
-                <button class="btn" onclick="calcMatchedCC()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Matched odds ratio (b / c)</td><td id="mc_or">--</td></tr>
-                <tr><td>McNemar chi-square</td><td id="mc_chi">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="screening" class="content-section">
-          <h2>Screening Test</h2>
-          <p class="subtitle">Calculate sensitivity, specificity, PPV, NPV, accuracy, LR+, and LR−.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Diagnostic 2×2 table</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                TP = 88, FP = 20, FN = 12, TN = 180
-              </div>
-              <table class="matrix-table">
-                <tr><th>Test \ Truth</th><th>Disease (+)</th><th>Disease (-)</th></tr>
-                <tr><th>Test (+)</th><td><input type="number" id="sc_a" value="88"></td><td><input type="number" id="sc_b" value="20"></td></tr>
-                <tr><th>Test (-)</th><td><input type="number" id="sc_c" value="12"></td><td><input type="number" id="sc_d" value="180"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetScreening()">Load example</button>
-                <button class="btn" onclick="calcScreening()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Metric</th><th>Value</th></tr>
-                <tr><td>Sensitivity (%)</td><td id="sc_sens">--</td></tr>
-                <tr><td>Specificity (%)</td><td id="sc_spec">--</td></tr>
-                <tr><td>PPV (%)</td><td id="sc_ppv">--</td></tr>
-                <tr><td>NPV (%)</td><td id="sc_npv">--</td></tr>
-                <tr><td>Accuracy (%)</td><td id="sc_acc">--</td></tr>
-                <tr><td>LR+</td><td id="sc_lrp">--</td></tr>
-                <tr><td>LR−</td><td id="sc_lrn">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="personTime" class="content-section">
-          <h2>Person-time Rate</h2>
-          <p class="subtitle">Summarize person-time from individual follow-up values and compute an event rate.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Person-time inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Follow-up = 2.5, 3, 1.25, 4.1, 2 years; events = 4
-              </div>
-              <div class="fg">
-                <label>Follow-up times</label>
-                <span class="hint">Enter values separated by commas</span>
-                <textarea id="pt_list">2.5, 3, 1.25, 4.1, 2</textarea>
-              </div>
-              <div class="fg"><label>Events</label><input type="number" id="pt_events" value="4"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetPersonTime()">Load example</button>
-                <button class="btn" onclick="calcPersonTime()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Metric</th><th>Value</th></tr>
-                <tr><td>Participants</td><td id="pt_n">--</td></tr>
-                <tr><td>Total person-time</td><td id="pt_total">--</td></tr>
-                <tr><td>Average follow-up</td><td id="pt_avg">--</td></tr>
-                <tr><td>Rate</td><td id="pt_rate">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="oneRate" class="content-section">
-          <h2>One Rate</h2>
-          <p class="subtitle">Calculate a single rate and approximate confidence interval from cases and person-time.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                22 events over 8,400 person-days
-              </div>
-              <div class="fg"><label>Events</label><input type="number" id="orate_a" value="22"></div>
-              <div class="fg"><label>Person-time</label><input type="number" id="orate_pt" value="8400"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetOneRate()">Load example</button>
-                <button class="btn" onclick="calcOneRate()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Rate</td><td id="orate_rate">--</td></tr>
-                <tr><td>95% lower CI</td><td id="orate_l">--</td></tr>
-                <tr><td>95% upper CI</td><td id="orate_u">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="compareRates" class="content-section">
-          <h2>Compare Two Rates</h2>
-          <p class="subtitle">Compare two incidence rates using rate ratio and rate difference.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Rate inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Group A: 12 events / 540 PY; Group B: 28 events / 610 PY
-              </div>
-              <div class="fg">
-                <label>Group A</label>
-                <div class="inline-2">
-                  <input type="number" id="cr_a1" value="12" placeholder="Events">
-                  <input type="number" id="cr_pt1" value="540" placeholder="Person-time">
+        <main>
+            <section id="m-home" class="content-section active-section">
+                <h2>Statistical Workspace Dashboard</h2>
+                <div class="panel">
+                    <p style="line-height: 1.6; margin-bottom: 15px;">Welcome to the high-precision statistical engine. Select any of the 17 epidemiological modules from the sidebar menu to begin analysis.</p>
+                    <p style="line-height: 1.6;"><strong>Features:</strong></p>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>Exact algorithms matching core OpenEpi methodology.</li>
+                        <li>Dynamic calculation tables yielding precise confidence bounds.</li>
+                        <li><strong>Built-in Example Data:</strong> Every module includes context-driven example data to demonstrate usage and interpretation.</li>
+                        <li>Scalable matrices including a dynamic 2 to 8 group ANOVA processor.</li>
+                    </ul>
                 </div>
-              </div>
-              <div class="fg">
-                <label>Group B</label>
-                <div class="inline-2">
-                  <input type="number" id="cr_a2" value="28" placeholder="Events">
-                  <input type="number" id="cr_pt2" value="610" placeholder="Person-time">
+            </section>
+
+            <section id="m-smr" class="content-section">
+                <h2>Standardized Mortality Ratio (SMR)</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> A chemical plant observes 20 cancer deaths among workers, but based on national demographics, only 15.5 were expected. Is the elevated rate statistically significant?</p>
+                    <button class="btn-load-example" onclick="loadExample('smr')">Load Example</button>
                 </div>
-              </div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetCompareRates()">Load example</button>
-                <button class="btn" onclick="calcCompareRates()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Rate A</td><td id="cr_r1">--</td></tr>
-                <tr><td>Rate B</td><td id="cr_r2">--</td></tr>
-                <tr><td>Rate ratio</td><td id="cr_rr">--</td></tr>
-                <tr><td>Rate difference</td><td id="cr_rd">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="meanCI" class="content-section">
-          <h2>Mean Confidence Interval</h2>
-          <p class="subtitle">Estimate a confidence interval around the mean using the sample size and SD.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Mean systolic BP = 128, SD = 14, n = 64
-              </div>
-              <div class="fg"><label>Sample size (n)</label><input type="number" id="mci_n" value="64"></div>
-              <div class="fg"><label>Mean</label><input type="number" id="mci_m" value="128"></div>
-              <div class="fg"><label>Standard deviation (SD)</label><input type="number" id="mci_sd" value="14"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetMeanCI()">Load example</button>
-                <button class="btn" onclick="calcMeanCI()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Mean</td><td id="mci_mean">--</td></tr>
-                <tr><td>Standard error</td><td id="mci_se">--</td></tr>
-                <tr><td>95% lower CI</td><td id="mci_l">--</td></tr>
-                <tr><td>95% upper CI</td><td id="mci_u">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="medianCI" class="content-section">
-          <h2>Median / Percentile Confidence Interval</h2>
-          <p class="subtitle">Report percentile rank position and approximate confidence rank bounds.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Median length of stay with n = 90
-              </div>
-              <div class="fg"><label>Sample size (n)</label><input type="number" id="med_n" value="90"></div>
-              <div class="fg">
-                <label>Target percentile (p)</label>
-                <span class="hint">Use 0.50 for median, 0.25 for 25th percentile, 0.75 for 75th percentile.</span>
-                <input type="number" id="med_p" value="0.5" step="0.05">
-              </div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetMedianCI()">Load example</button>
-                <button class="btn" onclick="calcMedianCI()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Expected rank</td><td id="med_rank">--</td></tr>
-                <tr><td>Lower rank bound</td><td id="med_l">--</td></tr>
-                <tr><td>Upper rank bound</td><td id="med_u">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="ttest" class="content-section">
-          <h2>Independent t Test</h2>
-          <p class="subtitle">Compute pooled-variance t statistic, degrees of freedom, and mean difference.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Group summaries</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Group 1: n = 30, mean = 84.2, SD = 9.1; Group 2: n = 35, mean = 78.5, SD = 10.4
-              </div>
-              <table class="matrix-table">
-                <tr><th>Group</th><th>n</th><th>Mean</th><th>SD</th></tr>
-                <tr><th>1</th><td><input type="number" id="tt_n1" value="30"></td><td><input type="number" id="tt_m1" value="84.2"></td><td><input type="number" id="tt_s1" value="9.1"></td></tr>
-                <tr><th>2</th><td><input type="number" id="tt_n2" value="35"></td><td><input type="number" id="tt_m2" value="78.5"></td><td><input type="number" id="tt_s2" value="10.4"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetTTest()">Load example</button>
-                <button class="btn" onclick="calcTTest()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Mean difference</td><td id="tt_diff">--</td></tr>
-                <tr><td>Pooled SD</td><td id="tt_psd">--</td></tr>
-                <tr><td>t statistic</td><td id="tt_t">--</td></tr>
-                <tr><td>Degrees of freedom</td><td id="tt_df">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="anova" class="content-section">
-          <h2>ANOVA for Up to Eight Groups</h2>
-          <p class="subtitle">Choose 2 to 8 groups, enter n, mean, and SD for each group, then compute one-way ANOVA.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>ANOVA inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Start with 3 groups or expand up to 8 groups using the selector below.
-              </div>
-              <div class="fg">
-                <label>Number of groups</label>
-                <select id="anova_groups" onchange="renderAnovaRows()">
-                  <option value="2">2 groups</option>
-                  <option value="3" selected>3 groups</option>
-                  <option value="4">4 groups</option>
-                  <option value="5">5 groups</option>
-                  <option value="6">6 groups</option>
-                  <option value="7">7 groups</option>
-                  <option value="8">8 groups</option>
-                </select>
-              </div>
-              <div id="anova_table_wrap"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetANOVA()">Load example</button>
-                <button class="btn" onclick="calcANOVA()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>ANOVA results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Grand mean</td><td id="anova_gm">--</td></tr>
-                <tr><td>SS between</td><td id="anova_ssb">--</td></tr>
-                <tr><td>SS within</td><td id="anova_ssw">--</td></tr>
-                <tr><td>MS between</td><td id="anova_msb">--</td></tr>
-                <tr><td>MS within</td><td id="anova_msw">--</td></tr>
-                <tr><td>F statistic</td><td id="anova_f">--</td></tr>
-                <tr><td>df between</td><td id="anova_dfb">--</td></tr>
-                <tr><td>df within</td><td id="anova_dfw">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="ssProp" class="content-section">
-          <h2>Sample Size for a Proportion</h2>
-          <p class="subtitle">Estimate required sample size for a proportion with optional finite population correction.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Expected prevalence = 15%, precision = 5%, confidence = 95%
-              </div>
-              <div class="fg"><label>Population size (N)</label><input type="number" id="ssp_N" value="1000000"></div>
-              <div class="fg"><label>Expected proportion (%)</label><input type="number" id="ssp_p" value="15"></div>
-              <div class="fg"><label>Absolute precision (%)</label><input type="number" id="ssp_d" value="5"></div>
-              <div class="fg"><label>Confidence level (%)</label><input type="number" id="ssp_conf" value="95"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetSSProp()">Load example</button>
-                <button class="btn" onclick="calcSSProp()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Sample size (infinite population)</td><td id="ssp_inf">--</td></tr>
-                <tr><td>Sample size (finite population corrected)</td><td id="ssp_fin">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="ssUcc" class="content-section">
-          <h2>Sample Size for Unmatched Case-control</h2>
-          <p class="subtitle">Estimate cases and controls from expected control exposure, odds ratio, ratio, confidence, and power.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Control exposure = 20%, OR = 2.0, case:control ratio = 1:2, power = 80%
-              </div>
-              <div class="fg"><label>Confidence level (%)</label><input type="number" id="ssu_conf" value="95"></div>
-              <div class="fg"><label>Power (%)</label><input type="number" id="ssu_power" value="80"></div>
-              <div class="fg"><label>Controls per case</label><input type="number" id="ssu_r" value="2"></div>
-              <div class="fg"><label>Exposure in controls (%)</label><input type="number" id="ssu_p0" value="20"></div>
-              <div class="fg"><label>Odds ratio</label><input type="number" id="ssu_or" value="2"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetSSUCC()">Load example</button>
-                <button class="btn" onclick="calcSSUCC()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Required cases</td><td id="ssu_cases">--</td></tr>
-                <tr><td>Required controls</td><td id="ssu_ctrls">--</td></tr>
-                <tr><td>Total sample</td><td id="ssu_total">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="ssCohort" class="content-section">
-          <h2>Sample Size for Cohort/RCT</h2>
-          <p class="subtitle">Estimate two-group sample size from expected outcome proportions.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Control risk = 18%, intervention risk = 10%, power = 80%
-              </div>
-              <div class="fg"><label>Confidence level (%)</label><input type="number" id="ssc_conf" value="95"></div>
-              <div class="fg"><label>Power (%)</label><input type="number" id="ssc_power" value="80"></div>
-              <div class="fg"><label>Ratio group 2 : group 1</label><input type="number" id="ssc_r" value="1"></div>
-              <div class="fg"><label>Outcome in group 1 (%)</label><input type="number" id="ssc_p0" value="18"></div>
-              <div class="fg"><label>Outcome in group 2 (%)</label><input type="number" id="ssc_p1" value="10"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetSSCohort()">Load example</button>
-                <button class="btn" onclick="calcSSCohort()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Required group 1</td><td id="ssc_n1">--</td></tr>
-                <tr><td>Required group 2</td><td id="ssc_n2">--</td></tr>
-                <tr><td>Total sample</td><td id="ssc_total">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="ssMean" class="content-section">
-          <h2>Sample Size for Mean Difference</h2>
-          <p class="subtitle">Estimate required sample size for detecting a difference in means.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Expected difference = 4.5 units, SD = 10, power = 80%
-              </div>
-              <div class="fg"><label>Confidence level (%)</label><input type="number" id="ssm_conf" value="95"></div>
-              <div class="fg"><label>Power (%)</label><input type="number" id="ssm_power" value="80"></div>
-              <div class="fg"><label>Ratio group 2 : group 1</label><input type="number" id="ssm_r" value="1"></div>
-              <div class="fg"><label>Common SD</label><input type="number" id="ssm_sd" value="10"></div>
-              <div class="fg"><label>Mean difference</label><input type="number" id="ssm_diff" value="4.5"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetSSMean()">Load example</button>
-                <button class="btn" onclick="calcSSMean()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Required group 1</td><td id="ssm_n1">--</td></tr>
-                <tr><td>Required group 2</td><td id="ssm_n2">--</td></tr>
-                <tr><td>Total sample</td><td id="ssm_total">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="powTwoProp" class="content-section">
-          <h2>Power for Two Proportions</h2>
-          <p class="subtitle">Approximate achieved power from two group sizes and two proportions.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                n1 = 180, n2 = 180, p1 = 40%, p2 = 55%
-              </div>
-              <div class="fg"><label>Group 1 size</label><input type="number" id="p2p_n1" value="180"></div>
-              <div class="fg"><label>Group 2 size</label><input type="number" id="p2p_n2" value="180"></div>
-              <div class="fg"><label>Proportion in group 1 (%)</label><input type="number" id="p2p_p1" value="40"></div>
-              <div class="fg"><label>Proportion in group 2 (%)</label><input type="number" id="p2p_p2" value="55"></div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetPower2Prop()">Load example</button>
-                <button class="btn" onclick="calcPower2Prop()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Difference</td><td id="p2p_diff">--</td></tr>
-                <tr><td>Z effect</td><td id="p2p_z">--</td></tr>
-                <tr><td>Approximate power (%)</td><td id="p2p_power">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="uccAnalysis" class="content-section">
-          <h2>Unmatched Case-control Analysis</h2>
-          <p class="subtitle">Analyze an unmatched case-control 2×2 table with odds ratio and exposure proportions.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Case-control 2×2</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Cases exposed = 48, cases unexposed = 72, controls exposed = 30, controls unexposed = 90
-              </div>
-              <table class="matrix-table">
-                <tr><th></th><th>Exposed</th><th>Unexposed</th></tr>
-                <tr><th>Cases</th><td><input type="number" id="ucc_a" value="48"></td><td><input type="number" id="ucc_b" value="72"></td></tr>
-                <tr><th>Controls</th><td><input type="number" id="ucc_c" value="30"></td><td><input type="number" id="ucc_d" value="90"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetUCC()">Load example</button>
-                <button class="btn" onclick="calcUCC()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Odds ratio</td><td id="ucc_or">--</td></tr>
-                <tr><td>Exposure in cases (%)</td><td id="ucc_pc">--</td></tr>
-                <tr><td>Exposure in controls (%)</td><td id="ucc_pn">--</td></tr>
-                <tr><td>Chi-square</td><td id="ucc_chi">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="cohortAnalysis" class="content-section">
-          <h2>Cohort Analysis</h2>
-          <p class="subtitle">Analyze a cohort 2×2 table with risk ratio, risk difference, and attributable fraction in the exposed.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Cohort 2×2</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Exposed cases = 45, exposed non-cases = 155, unexposed cases = 20, unexposed non-cases = 180
-              </div>
-              <table class="matrix-table">
-                <tr><th></th><th>Outcome (+)</th><th>Outcome (-)</th></tr>
-                <tr><th>Exposed</th><td><input type="number" id="co_a" value="45"></td><td><input type="number" id="co_b" value="155"></td></tr>
-                <tr><th>Unexposed</th><td><input type="number" id="co_c" value="20"></td><td><input type="number" id="co_d" value="180"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetCohort()">Load example</button>
-                <button class="btn" onclick="calcCohort()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Risk exposed</td><td id="co_re">--</td></tr>
-                <tr><td>Risk unexposed</td><td id="co_ru">--</td></tr>
-                <tr><td>Risk ratio</td><td id="co_rr">--</td></tr>
-                <tr><td>Risk difference</td><td id="co_rd">--</td></tr>
-                <tr><td>Attributable fraction in exposed (%)</td><td id="co_afe">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="trialAnalysis" class="content-section">
-          <h2>Clinical Trial Analysis</h2>
-          <p class="subtitle">Summarize benefit and harm measures from trial outcome proportions.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Trial outcome table</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Treatment success = 108/180, control success = 72/180
-              </div>
-              <table class="matrix-table">
-                <tr><th></th><th>Success</th><th>Failure</th></tr>
-                <tr><th>Treatment</th><td><input type="number" id="tr_a" value="108"></td><td><input type="number" id="tr_b" value="72"></td></tr>
-                <tr><th>Control</th><td><input type="number" id="tr_c" value="72"></td><td><input type="number" id="tr_d" value="108"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetTrial()">Load example</button>
-                <button class="btn" onclick="calcTrial()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Response rate treatment</td><td id="tr_rt">--</td></tr>
-                <tr><td>Response rate control</td><td id="tr_rc">--</td></tr>
-                <tr><td>Absolute benefit</td><td id="tr_ab">--</td></tr>
-                <tr><td>Relative benefit ratio</td><td id="tr_rr">--</td></tr>
-                <tr><td>Number needed to treat</td><td id="tr_nnt">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="crossSectional" class="content-section">
-          <h2>Cross-sectional Analysis</h2>
-          <p class="subtitle">Compare two prevalence proportions from a cross-sectional dataset.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Prevalence comparison</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Group A = 60 positives out of 500, Group B = 100 positives out of 500
-              </div>
-              <div class="fg">
-                <label>Group A</label>
-                <div class="inline-2">
-                  <input type="number" id="xs_x1" value="60" placeholder="Positive">
-                  <input type="number" id="xs_n1" value="500" placeholder="Total">
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Observation Data</h3>
+                        <div class="fg"><label>Observed Events (O)</label><input type="number" id="smr-o"></div>
+                        <div class="fg"><label>Expected Events (E)</label><input type="number" id="smr-e"></div>
+                        <button class="btn-calc" onclick="c_smr()">Calculate Limits</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Statistical Output (95% CI)</h3>
+                        <table class="results">
+                            <tr><th>Metric</th><th>Computed Value</th></tr>
+                            <tr class="highlight-row"><td>SMR Ratio (O/E)</td><td id="out-smr-val">--</td></tr>
+                            <tr><td>Lower Limit (Byar's Exact)</td><td id="out-smr-l">--</td></tr>
+                            <tr><td>Upper Limit (Byar's Exact)</td><td id="out-smr-u">--</td></tr>
+                        </table>
+                    </div>
                 </div>
-              </div>
-              <div class="fg">
-                <label>Group B</label>
-                <div class="inline-2">
-                  <input type="number" id="xs_x2" value="100" placeholder="Positive">
-                  <input type="number" id="xs_n2" value="500" placeholder="Total">
-                </div>
-              </div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetCrossSectional()">Load example</button>
-                <button class="btn" onclick="calcCrossSectional()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Prevalence A</td><td id="xs_p1">--</td></tr>
-                <tr><td>Prevalence B</td><td id="xs_p2">--</td></tr>
-                <tr><td>Prevalence ratio</td><td id="xs_pr">--</td></tr>
-                <tr><td>Prevalence difference</td><td id="xs_pd">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
+            </section>
 
-        <section id="meanDiffAnalysis" class="content-section">
-          <h2>Mean-difference Analysis</h2>
-          <p class="subtitle">Estimate mean difference, pooled SD, standardized effect size, and standard error.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Group summaries</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Group 1: n = 75, mean = 26.8, SD = 9; Group 2: n = 75, mean = 23.3, SD = 9
-              </div>
-              <table class="matrix-table">
-                <tr><th>Group</th><th>n</th><th>Mean</th><th>SD</th></tr>
-                <tr><th>1</th><td><input type="number" id="md_n1" value="75"></td><td><input type="number" id="md_m1" value="26.8"></td><td><input type="number" id="md_s1" value="9"></td></tr>
-                <tr><th>2</th><td><input type="number" id="md_n2" value="75"></td><td><input type="number" id="md_m2" value="23.3"></td><td><input type="number" id="md_s2" value="9"></td></tr>
-              </table>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetMeanDiff()">Load example</button>
-                <button class="btn" onclick="calcMeanDiff()">Calculate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Results</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Mean difference</td><td id="md_diff">--</td></tr>
-                <tr><td>Pooled SD</td><td id="md_psd">--</td></tr>
-                <tr><td>SE of difference</td><td id="md_se">--</td></tr>
-                <tr><td>Cohen's d</td><td id="md_d">--</td></tr>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section id="seededRandom" class="content-section">
-          <h2>Seeded Random-number Generator</h2>
-          <p class="subtitle">Generate reproducible random integers using a numeric seed.</p>
-          <div class="grid-split">
-            <div class="panel">
-              <h3>Generator inputs</h3>
-              <div class="example-box">
-                <strong>Example</strong>
-                Seed = 2026, count = 12, min = 1, max = 100
-              </div>
-              <div class="fg"><label>Seed</label><input type="number" id="rng_seed" value="2026"></div>
-              <div class="fg"><label>How many numbers</label><input type="number" id="rng_count" value="12"></div>
-              <div class="fg">
-                <label>Range</label>
-                <div class="inline-2">
-                  <input type="number" id="rng_min" value="1" placeholder="Minimum">
-                  <input type="number" id="rng_max" value="100" placeholder="Maximum">
+            <section id="m-propci" class="content-section">
+                <h2>Proportion Confidence Limits</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> A new surgical technique is successful in 15 out of 100 trial procedures. Calculate the asymptotic and exact confidence bounds of the success rate.</p>
+                    <button class="btn-load-example" onclick="loadExample('propci')">Load Example</button>
                 </div>
-              </div>
-              <div class="fg">
-                <label>Mode</label>
-                <select id="rng_mode">
-                  <option value="dup">Allow duplicates</option>
-                  <option value="uniq">Unique only</option>
-                </select>
-              </div>
-              <div class="btn-row">
-                <button class="btn-secondary" onclick="presetSeededRNG()">Load example</button>
-                <button class="btn" onclick="calcSeededRNG()">Generate</button>
-              </div>
-            </div>
-            <div class="panel">
-              <h3>Generated output</h3>
-              <table class="results">
-                <tr><th>Measure</th><th>Value</th></tr>
-                <tr><td>Count</td><td id="rng_out_count">--</td></tr>
-                <tr><td>Numbers</td><td id="rng_out_list">--</td></tr>
-              </table>
-              <div class="note">Using the same seed reproduces the same sequence.</div>
-            </div>
-          </div>
-        </section>
-      </main>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Input Parameters</h3>
+                        <div class="fg"><label>Numerator (x) [Events]</label><input type="number" id="pci-x"></div>
+                        <div class="fg"><label>Denominator (n) [Total]</label><input type="number" id="pci-n"></div>
+                        <button class="btn-calc" onclick="c_propci()">Calculate Bounds</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Results (95% CI)</h3>
+                        <table class="results">
+                            <tr><th>Method</th><th>Proportion</th><th>Lower bound</th><th>Upper bound</th></tr>
+                            <tr><td>Wald (Asymptotic)</td><td id="out-pci-pw">--</td><td id="out-pci-wl">--</td><td id="out-pci-wu">--</td></tr>
+                            <tr><td>Wilson Score</td><td id="out-pci-ps">--</td><td id="out-pci-sl">--</td><td id="out-pci-su">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-2x2" class="content-section">
+                <h2>Two by Two Table Analysis</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Food poisoning outbreak analysis. 30 people ate suspect meat and got sick, 10 ate it and stayed well. 15 didn't eat it but got sick, 45 didn't eat it and stayed well.</p>
+                    <button class="btn-load-example" onclick="loadExample('2x2')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>2x2 Data Matrix</h3>
+                        <table class="matrix-table">
+                            <tr><th></th><th>Disease (+)</th><th>Disease (-)</th></tr>
+                            <tr><th>Exposed (+)</th><td><input type="number" id="t2-a"></td><td><input type="number" id="t2-b"></td></tr>
+                            <tr><th>Unexposed (-)</th><td><input type="number" id="t2-c"></td><td><input type="number" id="t2-d"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_2x2()">Evaluate Matrix</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Association Measures</h3>
+                        <table class="results">
+                            <tr><th>Measure</th><th>Value</th></tr>
+                            <tr class="highlight-row"><td>Odds Ratio (Cross-Product)</td><td id="out-2x2-or">--</td></tr>
+                            <tr><td>Risk Ratio (Relative Risk)</td><td id="out-2x2-rr">--</td></tr>
+                            <tr><td>Uncorrected Chi-Square</td><td id="out-2x2-chi">--</td></tr>
+                            <tr><td>Yates Corrected Chi-Square</td><td id="out-2x2-yates">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-dose" class="content-section">
+                <h2>Chi-Square for Dose-Response Trend</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Smoking level (1=Low, 2=Medium, 3=High) versus instances of respiratory distress in cases vs controls. Does risk increase linearly with exposure score?</p>
+                    <button class="btn-load-example" onclick="loadExample('dose')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Exposure Levels</h3>
+                        <table class="matrix-table">
+                            <tr><th>Score (Level)</th><th>Cases</th><th>Controls</th></tr>
+                            <tr><td><input type="number" id="dr-s1"></td><td><input type="number" id="dr-a1"></td><td><input type="number" id="dr-b1"></td></tr>
+                            <tr><td><input type="number" id="dr-s2"></td><td><input type="number" id="dr-a2"></td><td><input type="number" id="dr-b2"></td></tr>
+                            <tr><td><input type="number" id="dr-s3"></td><td><input type="number" id="dr-a3"></td><td><input type="number" id="dr-b3"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_dose()">Calculate Linear Trend</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Trend Statistics</h3>
+                        <table class="results">
+                            <tr><th>Statistic</th><th>Computed Value</th></tr>
+                            <tr class="highlight-row"><td>Mantel-Haenszel Chi-Square (χ²)</td><td id="out-dr-chi">--</td></tr>
+                            <tr><td>Degrees of Freedom (df)</td><td>1</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-rxc" class="content-section">
+                <h2>R by C Contingency Table</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> A study comparing blood type (Rows 1-3: Type A, B, O) to disease severity (Cols 1-3: Mild, Moderate, Severe) to test for independence.</p>
+                    <button class="btn-load-example" onclick="loadExample('rxc')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>3x3 Observation Matrix</h3>
+                        <table class="matrix-table">
+                            <tr><th>Row \ Col</th><th>Col 1</th><th>Col 2</th><th>Col 3</th></tr>
+                            <tr><th>Row 1</th><td><input type="number" id="rc11"></td><td><input type="number" id="rc12"></td><td><input type="number" id="rc13"></td></tr>
+                            <tr><th>Row 2</th><td><input type="number" id="rc21"></td><td><input type="number" id="rc22"></td><td><input type="number" id="rc23"></td></tr>
+                            <tr><th>Row 3</th><td><input type="number" id="rc31"></td><td><input type="number" id="rc32"></td><td><input type="number" id="rc33"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_rxc()">Calculate Matrix</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Chi-Square Results</h3>
+                        <table class="results">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr class="highlight-row"><td>Pearson Chi-Square (χ²)</td><td id="out-rxc-chi">--</td></tr>
+                            <tr><td>Degrees of Freedom (df)</td><td id="out-rxc-df">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-mcc" class="content-section">
+                <h2>Matched Case Control Analysis</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Twin study on diet. Looking at discordant pairs where only one twin has the disease. 25 pairs where only the healthy twin was exposed (b), 8 pairs where only the sick twin was exposed (c).</p>
+                    <button class="btn-load-example" onclick="loadExample('mcc')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Discordant Pair Matrix</h3>
+                        <table class="matrix-table">
+                            <tr><th>Controls \ Cases</th><th>Exposed (+)</th><th>Unexposed (-)</th></tr>
+                            <tr><th>Exposed (+)</th><td><input type="number" id="mc-a" placeholder="Concord"></td><td><input type="number" id="mc-b" style="background:#e3f2fd;"></td></tr>
+                            <tr><th>Unexposed (-)</th><td><input type="number" id="mc-c" style="background:#e3f2fd;"></td><td><input type="number" id="mc-d" placeholder="Concord"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_mcc()">Calculate McNemar</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Paired Statistics</h3>
+                        <table class="results">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr class="highlight-row"><td>Matched Odds Ratio (c/b)</td><td id="out-mcc-or">--</td></tr>
+                            <tr><td>McNemar Chi-Square (Uncorrected)</td><td id="out-mcc-chi">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-screen" class="content-section">
+                <h2>Screening / Diagnostic Validity</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> A rapid antigen test validation. Against PCR gold standard, there were 85 True Positives, 15 False Positives, 10 False Negatives, and 90 True Negatives.</p>
+                    <button class="btn-load-example" onclick="loadExample('screen')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Test vs Gold Standard</h3>
+                        <table class="matrix-table">
+                            <tr><th>Test \ True Dis</th><th>True (+)</th><th>True (-)</th></tr>
+                            <tr><th>Test (+)</th><td><input type="number" id="sc-a"></td><td><input type="number" id="sc-b"></td></tr>
+                            <tr><th>Test (-)</th><td><input type="number" id="sc-c"></td><td><input type="number" id="sc-d"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_screen()">Calculate Efficiency</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Diagnostic Metrics</h3>
+                        <table class="results">
+                            <tr><th>Metric Component</th><th>Percentage (%)</th></tr>
+                            <tr><td>Sensitivity (Recall)</td><td id="out-sc-sens">--</td></tr>
+                            <tr><td>Specificity</td><td id="out-sc-spec">--</td></tr>
+                            <tr><td>Positive Pred Value (PPV)</td><td id="out-sc-ppv">--</td></tr>
+                            <tr><td>Negative Pred Value (NPV)</td><td id="out-sc-npv">--</td></tr>
+                            <tr class="highlight-row"><td>Overall Accuracy</td><td id="out-sc-acc">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-1rate" class="content-section">
+                <h2>1 Person-Time Rate Assessment</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Tracking ICU infections. Found 18 incidence cases occurring over an accumulated 1250 patient-days.</p>
+                    <button class="btn-load-example" onclick="loadExample('1rate')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Cohort Details</h3>
+                        <div class="fg"><label>Number of Cases (a)</label><input type="number" id="r1-a"></div>
+                        <div class="fg"><label>Total Person-Time (PT)</label><input type="number" id="r1-pt"></div>
+                        <button class="btn-calc" onclick="c_1rate()">Calculate Rate</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Incidence Bounds (95% CI)</h3>
+                        <table class="results">
+                            <tr><th>Measure</th><th>Rate Value</th></tr>
+                            <tr class="highlight-row"><td>Crude Incidence Rate</td><td id="out-1r-rate">--</td></tr>
+                            <tr><td>Lower Limit (Byar's Approximation)</td><td id="out-1r-low">--</td></tr>
+                            <tr><td>Upper Limit (Byar's Approximation)</td><td id="out-1r-up">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-2rates" class="content-section">
+                <h2>Compare 2 Person-Time Rates</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Comparing injury incidence between Factory A (25 injuries over 800 worker-years) and Factory B (14 injuries over 950 worker-years).</p>
+                    <button class="btn-load-example" onclick="loadExample('2rates')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Exposure Cohorts</h3>
+                        <div class="fg"><label>Exposed (Cases &div; PT)</label><div style="display:flex;gap:10px;"><input type="number" id="r2-a1" placeholder="Cases"><input type="number" id="r2-pt1" placeholder="PT"></div></div>
+                        <div class="fg"><label>Unexposed (Cases &div; PT)</label><div style="display:flex;gap:10px;"><input type="number" id="r2-a2" placeholder="Cases"><input type="number" id="r2-pt2" placeholder="PT"></div></div>
+                        <button class="btn-calc" onclick="c_2rates()">Compare Rates</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Comparative Metrics</h3>
+                        <table class="results">
+                            <tr><th>Statistic</th><th>Value</th></tr>
+                            <tr class="highlight-row"><td>Rate Ratio (IRR)</td><td id="out-2r-rr">--</td></tr>
+                            <tr><td>Rate Difference (IRD)</td><td id="out-2r-rd">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-meanci" class="content-section">
+                <h2>Confidence Limits for a Mean</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> A sample of 64 adults reveals an average systolic blood pressure of 114.5 mmHg with a standard deviation of 14.2. Calculate the population mean range.</p>
+                    <button class="btn-load-example" onclick="loadExample('meanci')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Sample Statistics</h3>
+                        <div class="fg"><label>Sample Size (n)</label><input type="number" id="mci-n"></div>
+                        <div class="fg"><label>Sample Mean</label><input type="number" id="mci-m"></div>
+                        <div class="fg"><label>Standard Deviation (SD)</label><input type="number" id="mci-sd"></div>
+                        <button class="btn-calc" onclick="c_meanci()">Calculate Mean Limits</button>
+                    </div>
+                    <div class="panel">
+                        <h3>95% Confidence Bounds</h3>
+                        <table class="results">
+                            <tr><th>Bound Type</th><th>Computed Value</th></tr>
+                            <tr><td>Lower Limit Bound</td><td id="out-mci-l">--</td></tr>
+                            <tr><td>Upper Limit Bound</td><td id="out-mci-u">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-median" class="content-section">
+                <h2>Median / Percentile Confidence Bounds</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> For a sorted sample array of 120 patients by income, find the index positions that border the 95% confidence interval for the true median (50th percentile).</p>
+                    <button class="btn-load-example" onclick="loadExample('median')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Array Details</h3>
+                        <div class="fg"><label>Total Sample Size (n)</label><input type="number" id="med-n"></div>
+                        <div class="fg"><label>Target Percentile (p)</label><span class="hint">Use 0.50 for Median, 0.25 for 25th %ile</span><input type="number" id="med-p" step="0.05"></div>
+                        <button class="btn-calc" onclick="c_median()">Locate Rank Bounds</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Rank Order Indices (95% CI)</h3>
+                        <table class="results">
+                            <tr><th>Rank Position</th><th>Index Number</th></tr>
+                            <tr><td>Lower Sorting Index</td><td id="out-med-l">--</td></tr>
+                            <tr><td>Upper Sorting Index</td><td id="out-med-u">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-ttest" class="content-section">
+                <h2>Independent Two-Sample t-Test</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Comparing test scores between Method A (n=30, mean=84.2, SD=9.1) and Method B (n=35, mean=78.5, SD=10.4) using pooled variance.</p>
+                    <button class="btn-load-example" onclick="loadExample('ttest')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Group Parameters</h3>
+                        <table class="matrix-table">
+                            <tr><th>Group</th><th>Sample (n)</th><th>Mean</th><th>SD</th></tr>
+                            <tr><th>1</th><td><input type="number" id="tt-n1" class="wide"></td><td><input type="number" id="tt-m1" class="wide"></td><td><input type="number" id="tt-s1" class="wide"></td></tr>
+                            <tr><th>2</th><td><input type="number" id="tt-n2" class="wide"></td><td><input type="number" id="tt-m2" class="wide"></td><td><input type="number" id="tt-s2" class="wide"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_ttest()">Calculate t-score</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Test Statistics</h3>
+                        <table class="results">
+                            <tr><th>Metric</th><th>Value</th></tr>
+                            <tr><td>Mean Difference</td><td id="out-tt-diff">--</td></tr>
+                            <tr class="highlight-row"><td>Absolute t-Statistic</td><td id="out-tt-val">--</td></tr>
+                            <tr><td>Degrees of Freedom</td><td id="out-tt-df">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-anova" class="content-section">
+                <h2>One-Way ANOVA (2 to 8 Groups)</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Comparing BP reduction across 4 different hypertension drug treatments. Leave groups blank or set 'n=0' to exclude them from the F-Statistic calculation.</p>
+                    <button class="btn-load-example" onclick="loadExample('anova')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Group Data Entry</h3>
+                        <table class="matrix-table" id="anova-table">
+                            <tr><th>Grp</th><th>Sample (n)</th><th>Mean</th><th>SD</th></tr>
+                            <tr><th>1</th><td><input type="number" id="an-n1"></td><td><input type="number" id="an-m1"></td><td><input type="number" id="an-s1"></td></tr>
+                            <tr><th>2</th><td><input type="number" id="an-n2"></td><td><input type="number" id="an-m2"></td><td><input type="number" id="an-s2"></td></tr>
+                            <tr><th>3</th><td><input type="number" id="an-n3"></td><td><input type="number" id="an-m3"></td><td><input type="number" id="an-s3"></td></tr>
+                            <tr><th>4</th><td><input type="number" id="an-n4"></td><td><input type="number" id="an-m4"></td><td><input type="number" id="an-s4"></td></tr>
+                            <tr><th>5</th><td><input type="number" id="an-n5"></td><td><input type="number" id="an-m5"></td><td><input type="number" id="an-s5"></td></tr>
+                            <tr><th>6</th><td><input type="number" id="an-n6"></td><td><input type="number" id="an-m6"></td><td><input type="number" id="an-s6"></td></tr>
+                            <tr><th>7</th><td><input type="number" id="an-n7"></td><td><input type="number" id="an-m7"></td><td><input type="number" id="an-s7"></td></tr>
+                            <tr><th>8</th><td><input type="number" id="an-n8"></td><td><input type="number" id="an-m8"></td><td><input type="number" id="an-s8"></td></tr>
+                        </table>
+                        <button class="btn-calc" onclick="c_anova()">Compute Variance</button>
+                    </div>
+                    <div class="panel">
+                        <h3>F-Distribution Score</h3>
+                        <table class="results">
+                            <tr><th>Component</th><th>Value</th></tr>
+                            <tr><td>Number of active groups (k)</td><td id="out-an-k">--</td></tr>
+                            <tr><td>Total Sample Size (N)</td><td id="out-an-nt">--</td></tr>
+                            <tr class="highlight-row"><td>F-Statistic Ratio</td><td id="out-an-f">--</td></tr>
+                            <tr><td>Numerator df (Between)</td><td id="out-an-dfb">--</td></tr>
+                            <tr><td>Denominator df (Within)</td><td id="out-an-dfw">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-ssprop" class="content-section">
+                <h2>Sample Size: Single Proportion</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Planning a national survey to estimate obesity prevalence (anticipated at 50%) within a strict 5% margin of error, using a standard design effect of 1.0.</p>
+                    <button class="btn-load-example" onclick="loadExample('ssprop')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Study Logistics</h3>
+                        <div class="fg"><label>Population size (N)</label><span class="hint">Leave as 1000000 if large/unknown</span><input type="number" id="sp-n"></div>
+                        <div class="fg"><label>Anticipated % frequency (p)</label><input type="number" id="sp-p"></div>
+                        <div class="fg"><label>Confidence limits +/- % (d)</label><input type="number" id="sp-d"></div>
+                        <div class="fg"><label>Design effect (DEFF)</label><input type="number" id="sp-deff" step="0.1"></div>
+                        <button class="btn-calc" onclick="c_ssprop()">Compute Sample Range</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Required Responses (n)</h3>
+                        <table class="results">
+                            <tr><th>Confidence Level</th><th>Target Size (n)</th></tr>
+                            <tr><td>99% (Z=2.58)</td><td id="out-sp-99">--</td></tr>
+                            <tr class="highlight-row"><td>95% (Z=1.96)</td><td id="out-sp-95">--</td></tr>
+                            <tr><td>90% (Z=1.64)</td><td id="out-sp-90">--</td></tr>
+                            <tr><td>80% (Z=1.28)</td><td id="out-sp-80">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-ssucc" class="content-section">
+                <h2>Sample Size: Unmatched Case-Control</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> A study on lung cancer. Assuming 30% of healthy controls smoke, and we want 80% power to detect an Odds Ratio of 2.0 at 95% confidence with a 1:1 case/control ratio.</p>
+                    <button class="btn-load-example" onclick="loadExample('ssucc')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Trial Parameters</h3>
+                        <div class="fg"><label>Confidence Level (%)</label><input type="number" id="su-conf"></div>
+                        <div class="fg"><label>Power (% chance of detecting)</label><input type="number" id="su-pow"></div>
+                        <div class="fg"><label>Ratio of Controls to Cases</label><input type="number" id="su-r"></div>
+                        <div class="fg"><label>% Exposed in Controls (p2)</label><input type="number" id="su-p2"></div>
+                        <div class="fg"><label>Anticipated Odds Ratio</label><input type="number" id="su-or" step="0.1"></div>
+                        <button class="btn-calc" onclick="c_ssucc()">Calculate Cohort Limits</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Allocation (Kelsey Formula)</h3>
+                        <table class="results">
+                            <tr><th>Requirement</th><th>Size Allocation</th></tr>
+                            <tr><td>Required Cases (Group 1)</td><td id="out-su-cases">--</td></tr>
+                            <tr><td>Required Controls (Group 2)</td><td id="out-su-ctrls">--</td></tr>
+                            <tr class="highlight-row"><td>Total Target Size</td><td id="out-su-total">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-sscohort" class="content-section">
+                <h2>Sample Size: Cohort / RCT</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> A randomized clinical trial where a drug is expected to drop the adverse event rate from 15% (unexposed) to 5% (exposed). 80% power, 95% confidence.</p>
+                    <button class="btn-load-example" onclick="loadExample('sscohort')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Trial Parameters</h3>
+                        <div class="fg"><label>Confidence Level (%)</label><input type="number" id="sc-conf"></div>
+                        <div class="fg"><label>Power (% chance of detecting)</label><input type="number" id="sc-pow"></div>
+                        <div class="fg"><label>Ratio (Unexposed : Exposed)</label><input type="number" id="sc-r"></div>
+                        <div class="fg"><label>% Outcome in Unexposed (p2)</label><input type="number" id="sc-p2"></div>
+                        <div class="fg"><label>% Outcome in Exposed (p1)</label><input type="number" id="sc-p1"></div>
+                        <button class="btn-calc" onclick="c_sscohort()">Calculate Cohort Limits</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Allocation (Kelsey Formula)</h3>
+                        <table class="results">
+                            <tr><th>Requirement</th><th>Size Allocation</th></tr>
+                            <tr><td>Exposed Group (n1)</td><td id="out-sc-n1">--</td></tr>
+                            <tr><td>Unexposed Group (n2)</td><td id="out-sc-n2">--</td></tr>
+                            <tr class="highlight-row"><td>Total Target Size</td><td id="out-sc-total">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="m-ssmean" class="content-section">
+                <h2>Sample Size: Continuous Mean Difference</h2>
+                <div class="example-banner">
+                    <p><strong>Example context:</strong> Trying to detect a 5 mmHg difference in blood pressure between two diets. Prior studies show a standard deviation of 12. Using 80% power and 95% confidence.</p>
+                    <button class="btn-load-example" onclick="loadExample('ssmean')">Load Example</button>
+                </div>
+                <div class="grid-split">
+                    <div class="panel">
+                        <h3>Continuous Metrics</h3>
+                        <div class="fg"><label>Confidence Level (%)</label><input type="number" id="sm-conf"></div>
+                        <div class="fg"><label>Power (%)</label><input type="number" id="sm-pow"></div>
+                        <div class="fg"><label>Ratio (Group 2 : Group 1)</label><input type="number" id="sm-r"></div>
+                        <div class="fg"><label>Expected Std Deviation (SD)</label><input type="number" id="sm-sd"></div>
+                        <div class="fg"><label>Mean Difference to Detect (d)</label><input type="number" id="sm-d"></div>
+                        <button class="btn-calc" onclick="c_ssmean()">Calculate Allocation</button>
+                    </div>
+                    <div class="panel">
+                        <h3>Allocation Distribution</h3>
+                        <table class="results">
+                            <tr><th>Requirement</th><th>Size Allocation</th></tr>
+                            <tr><td>Group 1 Limit</td><td id="out-sm-n1">--</td></tr>
+                            <tr><td>Group 2 Limit</td><td id="out-sm-n2">--</td></tr>
+                            <tr class="highlight-row"><td>Total Cohort Need</td><td id="out-sm-total">--</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+        </main>
     </div>
 
-    <footer>
-      © Statistic Calculator | Dr Suriya Kumareswaran | dr.suriya@moh.gov.my
-    </footer>
-  </div>
+    <footer>&copy; 2026 Statistic Engine | Engineered for Precision | Data Engine by Dr Suriya kumareswaran</footer>
 
-  <script>
-    const $ = (id) => document.getElementById(id);
-    const getNum = (id) => parseFloat($(id).value);
-    const setText = (id, value) => { $(id).textContent = value; };
-
-    function fmt(x, d = 4) {
-      return Number.isFinite(x) ? Number(x).toFixed(d) : "--";
-    }
-
-    function clamp(x, lo, hi) {
-      return Math.min(hi, Math.max(lo, x));
-    }
-
-    function zFromConfidence(confPct) {
-      const c = confPct / 100;
-      if (c >= 0.999) return 3.291;
-      if (c >= 0.99) return 2.576;
-      if (c >= 0.98) return 2.326;
-      if (c >= 0.95) return 1.96;
-      if (c >= 0.90) return 1.645;
-      return 1.96;
-    }
-
-    function normCdf(x) {
-      const t = 1 / (1 + 0.2316419 * Math.abs(x));
-      const d = 0.3989423 * Math.exp(-x * x / 2);
-      let p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
-      p = 1 - p;
-      return x >= 0 ? p : 1 - p;
-    }
-
-    function approxPower(effectZ, alphaZ = 1.96) {
-      return clamp(100 * normCdf(Math.abs(effectZ) - alphaZ), 0, 100);
-    }
-
-    function parseList(raw) {
-      return raw
-        .split(/[\s,;]+/)
-        .map(Number)
-        .filter((x) => Number.isFinite(x));
-    }
-
-    function percentile(sorted, p) {
-      if (!sorted.length) return NaN;
-      const idx = (sorted.length - 1) * p;
-      const lo = Math.floor(idx);
-      const hi = Math.ceil(idx);
-      if (lo === hi) return sorted[lo];
-      return sorted[lo] + (sorted[hi] - sorted[lo]) * (idx - lo);
-    }
-
-    function byarPoissonCI(count, scale = 1) {
-      const k = count;
-      if (k < 0) return [NaN, NaN];
-      const lo = k > 0 ? k * Math.pow(1 - 1 / (9 * k) - 1.96 / (3 * Math.sqrt(k)), 3) : 0;
-      const hi = (k + 1) * Math.pow(1 - 1 / (9 * (k + 1)) + 1.96 / (3 * Math.sqrt(k + 1)), 3);
-      return [lo / scale, hi / scale];
-    }
-
-    function activateSection(id) {
-      document.querySelectorAll(".content-section").forEach((s) => s.classList.remove("active-section"));
-      const target = $(id);
-      if (target) target.classList.add("active-section");
-
-      document.querySelectorAll(".menu-item").forEach((b) => b.classList.remove("active"));
-      const btn = document.querySelector(`.menu-item[data-target="${id}"]`);
-      if (btn) btn.classList.add("active");
-
-      if (window.innerWidth <= 980) {
-        $("sidebarMenu").classList.remove("show-mobile");
-      }
-    }
-
-    document.querySelectorAll(".menu-item").forEach((btn) => {
-      btn.addEventListener("click", () => activateSection(btn.dataset.target));
-    });
-
-    $("menuToggle").addEventListener("click", () => {
-      $("sidebarMenu").classList.toggle("show-mobile");
-    });
-
-    document.addEventListener("click", (e) => {
-      if (window.innerWidth > 980) return;
-      const sidebar = $("sidebarMenu");
-      const toggle = $("menuToggle");
-      if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
-        sidebar.classList.remove("show-mobile");
-      }
-    });
-
-    $("moduleSearch").addEventListener("input", (e) => {
-      const q = e.target.value.trim().toLowerCase();
-      const buttons = [...document.querySelectorAll(".menu-item")];
-      buttons.forEach((btn) => {
-        const show = btn.textContent.toLowerCase().includes(q) || q === "";
-        btn.style.display = show ? "" : "none";
-      });
-    });
-
-    function renderAnovaRows() {
-      const groups = parseInt($("anova_groups").value, 10);
-      const wrap = $("anova_table_wrap");
-      let html = `
-        <table class="matrix-table">
-          <tr><th>Group</th><th>n</th><th>Mean</th><th>SD</th></tr>
-      `;
-      const defaults = [
-        [15, 22.4, 3.4],
-        [15, 28.1, 4.1],
-        [15, 21.2, 3.9],
-        [15, 26.5, 4.3],
-        [15, 24.8, 3.7],
-        [15, 29.4, 4.6],
-        [15, 23.6, 3.5],
-        [15, 27.2, 4.0]
-      ];
-      for (let i = 1; i <= groups; i++) {
-        const [n, m, s] = defaults[i - 1];
-        html += `
-          <tr>
-            <th>${i}</th>
-            <td><input type="number" id="an_n${i}" value="${n}"></td>
-            <td><input type="number" id="an_m${i}" value="${m}"></td>
-            <td><input type="number" id="an_s${i}" value="${s}"></td>
-          </tr>
-        `;
-      }
-      html += `</table>`;
-      wrap.innerHTML = html;
-    }
-
-    function presetSMR() {
-      $("smr_o").value = 20;
-      $("smr_e").value = 15.5;
-    }
-    function calcSMR() {
-      const O = getNum("smr_o"), E = getNum("smr_e");
-      if (!(E > 0 && O >= 0)) return;
-      const smr = O / E;
-      const [lo, hi] = byarPoissonCI(O, E);
-      setText("smr_res", fmt(smr));
-      setText("smr_low", fmt(lo));
-      setText("smr_high", fmt(hi));
-    }
-
-    function presetPCI() {
-      $("pci_x").value = 56;
-      $("pci_n").value = 200;
-    }
-    function calcPCI() {
-      const x = getNum("pci_x"), n = getNum("pci_n");
-      if (!(n > 0 && x >= 0 && x <= n)) return;
-      const p = x / n, z = 1.96;
-      const se = Math.sqrt(p * (1 - p) / n);
-      const wL = clamp(p - z * se, 0, 1);
-      const wU = clamp(p + z * se, 0, 1);
-      const denom = 1 + (z * z) / n;
-      const center = (p + (z * z) / (2 * n)) / denom;
-      const spread = (z * Math.sqrt((p * (1 - p) / n) + (z * z) / (4 * n * n))) / denom;
-
-      setText("pci_est1", fmt(p));
-      setText("pci_l1", fmt(wL));
-      setText("pci_u1", fmt(wU));
-      setText("pci_est2", fmt(p));
-      setText("pci_l2", fmt(clamp(center - spread, 0, 1)));
-      setText("pci_u2", fmt(clamp(center + spread, 0, 1)));
-    }
-
-    function preset2x2() {
-      $("tb_a").value = 20; $("tb_b").value = 80; $("tb_c").value = 10; $("tb_d").value = 90;
-    }
-    function calc2x2() {
-      const a = getNum("tb_a"), b = getNum("tb_b"), c = getNum("tb_c"), d = getNum("tb_d");
-      const n = a + b + c + d;
-      if (!(n > 0)) return;
-      const or = (a * d) / ((b || 1e-9) * (c || 1e-9));
-      const re = a / ((a + b) || 1e-9);
-      const ru = c / ((c + d) || 1e-9);
-      const rr = re / (ru || 1e-9);
-      const rd = re - ru;
-      const den = (a+b)*(c+d)*(a+c)*(b+d) || 1e-9;
-      const chi = n * Math.pow(a*d - b*c, 2) / den;
-      const yates = Math.max(0, n * Math.pow(Math.abs(a*d - b*c) - n/2, 2) / den);
-      setText("tb_or", fmt(or));
-      setText("tb_rr", fmt(rr));
-      setText("tb_rd", fmt(rd));
-      setText("tb_chi", fmt(chi));
-      setText("tb_yates", fmt(yates));
-    }
-
-    function presetDose() {
-      $("dr_s1").value = 1; $("dr_a1").value = 8;  $("dr_b1").value = 92;
-      $("dr_s2").value = 2; $("dr_a2").value = 15; $("dr_b2").value = 85;
-      $("dr_s3").value = 3; $("dr_a3").value = 28; $("dr_b3").value = 72;
-    }
-    function calcDose() {
-      const s = [getNum("dr_s1"), getNum("dr_s2"), getNum("dr_s3")];
-      const a = [getNum("dr_a1"), getNum("dr_a2"), getNum("dr_a3")];
-      const b = [getNum("dr_b1"), getNum("dr_b2"), getNum("dr_b3")];
-      const n = a.map((x, i) => x + b[i]);
-      const A = a.reduce((p, x) => p + x, 0);
-      const N = n.reduce((p, x) => p + x, 0);
-      if (!(N > 1 && A > 0 && A < N)) return;
-      const sBar = s.reduce((p, x, i) => p + x * n[i], 0) / N;
-      const num = Math.pow(s.reduce((p, x, i) => p + x * (a[i] - (n[i] * A / N)), 0), 2);
-      const den = (A * (N - A) / (N * (N - 1))) * s.reduce((p, x, i) => p + n[i] * Math.pow(x - sBar, 2), 0);
-      setText("dr_chi", fmt(num / (den || 1e-9)));
-    }
-
-    function presetRxC() {
-      $("rc11").value = 12; $("rc12").value = 18; $("rc13").value = 10;
-      $("rc21").value = 20; $("rc22").value = 11; $("rc23").value = 15;
-      $("rc31").value = 8;  $("rc32").value = 25; $("rc33").value = 9;
-    }
-    function calcRxC() {
-      const m = [
-        [getNum("rc11"), getNum("rc12"), getNum("rc13")],
-        [getNum("rc21"), getNum("rc22"), getNum("rc23")],
-        [getNum("rc31"), getNum("rc32"), getNum("rc33")]
-      ];
-      const rows = m.map(r => r.reduce((a,b) => a+b, 0));
-      const cols = [0,1,2].map(j => m.reduce((a,r) => a + r[j], 0));
-      const total = rows.reduce((a,b) => a+b, 0);
-      if (!(total > 0)) return;
-      let chi = 0;
-      for (let i=0;i<3;i++) {
-        for (let j=0;j<3;j++) {
-          const exp = rows[i] * cols[j] / total;
-          chi += Math.pow(m[i][j] - exp, 2) / (exp || 1e-9);
+    <script>
+        // UI Navigation
+        function nav(id, el) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById(id).classList.add('active-section');
+            document.querySelectorAll('.menu-item').forEach(b => b.classList.remove('active'));
+            if(el) el.classList.add('active');
+            if(window.innerWidth <= 1024) document.getElementById('sidebar-menu').classList.remove('show-mobile');
         }
-      }
-      setText("rxc_chi", fmt(chi));
-      setText("rxc_df", String((3 - 1) * (3 - 1)));
-      setText("rxc_n", String(total));
-    }
+        function toggleMenu() { document.getElementById('sidebar-menu').classList.toggle('show-mobile'); }
 
-    function presetMatchedCC() {
-      $("mc_a").value = 16; $("mc_b").value = 24; $("mc_c").value = 10; $("mc_d").value = 50;
-    }
-    function calcMatchedCC() {
-      const b = getNum("mc_b"), c = getNum("mc_c");
-      const or = b / (c || 1e-9);
-      const chi = Math.pow(Math.abs(b - c) - 1, 2) / ((b + c) || 1e-9);
-      setText("mc_or", fmt(or));
-      setText("mc_chi", fmt(Math.max(0, chi)));
-    }
-
-    function presetScreening() {
-      $("sc_a").value = 88; $("sc_b").value = 20; $("sc_c").value = 12; $("sc_d").value = 180;
-    }
-    function calcScreening() {
-      const a = getNum("sc_a"), b = getNum("sc_b"), c = getNum("sc_c"), d = getNum("sc_d");
-      const sens = a / ((a + c) || 1e-9);
-      const spec = d / ((b + d) || 1e-9);
-      const ppv = a / ((a + b) || 1e-9);
-      const npv = d / ((c + d) || 1e-9);
-      const acc = (a + d) / ((a + b + c + d) || 1e-9);
-      const lrp = sens / ((1 - spec) || 1e-9);
-      const lrn = (1 - sens) / (spec || 1e-9);
-
-      setText("sc_sens", fmt(100 * sens, 2));
-      setText("sc_spec", fmt(100 * spec, 2));
-      setText("sc_ppv", fmt(100 * ppv, 2));
-      setText("sc_npv", fmt(100 * npv, 2));
-      setText("sc_acc", fmt(100 * acc, 2));
-      setText("sc_lrp", fmt(lrp));
-      setText("sc_lrn", fmt(lrn));
-    }
-
-    function presetPersonTime() {
-      $("pt_list").value = "2.5, 3, 1.25, 4.1, 2";
-      $("pt_events").value = 4;
-    }
-    function calcPersonTime() {
-      const arr = parseList($("pt_list").value);
-      const e = getNum("pt_events");
-      if (!arr.length) return;
-      const total = arr.reduce((a,b) => a+b, 0);
-      const avg = total / arr.length;
-      const rate = e / (total || 1e-9);
-      setText("pt_n", String(arr.length));
-      setText("pt_total", fmt(total, 3));
-      setText("pt_avg", fmt(avg, 3));
-      setText("pt_rate", fmt(rate));
-    }
-
-    function presetOneRate() {
-      $("orate_a").value = 22;
-      $("orate_pt").value = 8400;
-    }
-    function calcOneRate() {
-      const a = getNum("orate_a"), pt = getNum("orate_pt");
-      if (!(pt > 0 && a >= 0)) return;
-      const rate = a / pt;
-      const [lo, hi] = byarPoissonCI(a, pt);
-      setText("orate_rate", fmt(rate));
-      setText("orate_l", fmt(lo));
-      setText("orate_u", fmt(hi));
-    }
-
-    function presetCompareRates() {
-      $("cr_a1").value = 12; $("cr_pt1").value = 540;
-      $("cr_a2").value = 28; $("cr_pt2").value = 610;
-    }
-    function calcCompareRates() {
-      const a1 = getNum("cr_a1"), pt1 = getNum("cr_pt1");
-      const a2 = getNum("cr_a2"), pt2 = getNum("cr_pt2");
-      if (!(pt1 > 0 && pt2 > 0)) return;
-      const r1 = a1 / pt1, r2 = a2 / pt2;
-      setText("cr_r1", fmt(r1));
-      setText("cr_r2", fmt(r2));
-      setText("cr_rr", fmt(r1 / (r2 || 1e-9)));
-      setText("cr_rd", fmt(r1 - r2));
-    }
-
-    function presetMeanCI() {
-      $("mci_n").value = 64; $("mci_m").value = 128; $("mci_sd").value = 14;
-    }
-    function calcMeanCI() {
-      const n = getNum("mci_n"), m = getNum("mci_m"), sd = getNum("mci_sd");
-      if (!(n > 1 && sd >= 0)) return;
-      const se = sd / Math.sqrt(n);
-      setText("mci_mean", fmt(m));
-      setText("mci_se", fmt(se));
-      setText("mci_l", fmt(m - 1.96 * se));
-      setText("mci_u", fmt(m + 1.96 * se));
-    }
-
-    function presetMedianCI() {
-      $("med_n").value = 90;
-      $("med_p").value = 0.5;
-    }
-    function calcMedianCI() {
-      const n = getNum("med_n"), p = getNum("med_p");
-      if (!(n > 0 && p > 0 && p < 1)) return;
-      const rank = n * p;
-      const spread = 1.96 * Math.sqrt(n * p * (1 - p));
-      setText("med_rank", fmt(rank, 2));
-      setText("med_l", String(Math.max(1, Math.round(rank - spread))));
-      setText("med_u", String(Math.min(n, Math.round(rank + spread))));
-    }
-
-    function presetTTest() {
-      $("tt_n1").value = 30; $("tt_m1").value = 84.2; $("tt_s1").value = 9.1;
-      $("tt_n2").value = 35; $("tt_m2").value = 78.5; $("tt_s2").value = 10.4;
-    }
-    function calcTTest() {
-      const n1 = getNum("tt_n1"), m1 = getNum("tt_m1"), s1 = getNum("tt_s1");
-      const n2 = getNum("tt_n2"), m2 = getNum("tt_m2"), s2 = getNum("tt_s2");
-      if (!(n1 > 1 && n2 > 1)) return;
-      const psd = Math.sqrt((((n1 - 1) * s1 * s1) + ((n2 - 1) * s2 * s2)) / (n1 + n2 - 2));
-      const se = psd * Math.sqrt((1 / n1) + (1 / n2));
-      const t = (m1 - m2) / (se || 1e-9);
-      setText("tt_diff", fmt(m1 - m2));
-      setText("tt_psd", fmt(psd));
-      setText("tt_t", fmt(t));
-      setText("tt_df", String(n1 + n2 - 2));
-    }
-
-    function presetANOVA() {
-      $("anova_groups").value = "3";
-      renderAnovaRows();
-    }
-    function calcANOVA() {
-      const k = parseInt($("anova_groups").value, 10);
-      const n = [], m = [], s = [];
-      for (let i = 1; i <= k; i++) {
-        n.push(parseFloat($(`an_n${i}`).value));
-        m.push(parseFloat($(`an_m${i}`).value));
-        s.push(parseFloat($(`an_s${i}`).value));
-      }
-      const totalN = n.reduce((a,b) => a+b, 0);
-      if (!(k >= 2 && totalN > k)) return;
-      const gm = n.reduce((a, ni, i) => a + ni * m[i], 0) / totalN;
-      const ssb = n.reduce((a, ni, i) => a + ni * Math.pow(m[i] - gm, 2), 0);
-      const ssw = n.reduce((a, ni, i) => a + (ni - 1) * Math.pow(s[i], 2), 0);
-      const dfb = k - 1;
-      const dfw = totalN - k;
-      const msb = ssb / dfb;
-      const msw = ssw / dfw;
-      const f = msb / (msw || 1e-9);
-
-      setText("anova_gm", fmt(gm));
-      setText("anova_ssb", fmt(ssb));
-      setText("anova_ssw", fmt(ssw));
-      setText("anova_msb", fmt(msb));
-      setText("anova_msw", fmt(msw));
-      setText("anova_f", fmt(f));
-      setText("anova_dfb", String(dfb));
-      setText("anova_dfw", String(dfw));
-    }
-
-    function presetSSProp() {
-      $("ssp_N").value = 1000000;
-      $("ssp_p").value = 15;
-      $("ssp_d").value = 5;
-      $("ssp_conf").value = 95;
-    }
-    function calcSSProp() {
-      const N = getNum("ssp_N");
-      const p = getNum("ssp_p") / 100;
-      const d = getNum("ssp_d") / 100;
-      const z = zFromConfidence(getNum("ssp_conf"));
-      if (!(d > 0 && p >= 0 && p <= 1)) return;
-      const n0 = (z * z * p * (1 - p)) / (d * d);
-      const nf = n0 / (1 + ((n0 - 1) / (N || 1e12)));
-      setText("ssp_inf", String(Math.ceil(n0)));
-      setText("ssp_fin", String(Math.ceil(nf)));
-    }
-
-    function presetSSUCC() {
-      $("ssu_conf").value = 95;
-      $("ssu_power").value = 80;
-      $("ssu_r").value = 2;
-      $("ssu_p0").value = 20;
-      $("ssu_or").value = 2;
-    }
-    function calcSSUCC() {
-      const zA = zFromConfidence(getNum("ssu_conf"));
-      const zB = zFromConfidence(getNum("ssu_power"));
-      const r = getNum("ssu_r") || 1;
-      const p0 = getNum("ssu_p0") / 100;
-      const OR = getNum("ssu_or");
-      const p1 = (OR * p0) / (1 - p0 + OR * p0);
-      const pBar = (p1 + r * p0) / (r + 1);
-      const n1 = Math.pow(
-        zA * Math.sqrt((1 + 1 / r) * pBar * (1 - pBar)) +
-        zB * Math.sqrt((p1 * (1 - p1)) + (p0 * (1 - p0)) / r),
-        2
-      ) / Math.pow(p1 - p0, 2);
-      const cases = Math.ceil(n1);
-      const ctrls = Math.ceil(cases * r);
-      setText("ssu_cases", String(cases));
-      setText("ssu_ctrls", String(ctrls));
-      setText("ssu_total", String(cases + ctrls));
-    }
-
-    function presetSSCohort() {
-      $("ssc_conf").value = 95;
-      $("ssc_power").value = 80;
-      $("ssc_r").value = 1;
-      $("ssc_p0").value = 18;
-      $("ssc_p1").value = 10;
-    }
-    function calcSSCohort() {
-      const zA = zFromConfidence(getNum("ssc_conf"));
-      const zB = zFromConfidence(getNum("ssc_power"));
-      const r = getNum("ssc_r") || 1;
-      const p0 = getNum("ssc_p0") / 100;
-      const p1 = getNum("ssc_p1") / 100;
-      const pBar = (p1 + r * p0) / (r + 1);
-      const n1 = Math.pow(
-        zA * Math.sqrt((1 + 1 / r) * pBar * (1 - pBar)) +
-        zB * Math.sqrt((p1 * (1 - p1)) + (p0 * (1 - p0)) / r),
-        2
-      ) / Math.pow(p1 - p0, 2);
-      const g1 = Math.ceil(n1);
-      const g2 = Math.ceil(g1 * r);
-      setText("ssc_n1", String(g1));
-      setText("ssc_n2", String(g2));
-      setText("ssc_total", String(g1 + g2));
-    }
-
-    function presetSSMean() {
-      $("ssm_conf").value = 95;
-      $("ssm_power").value = 80;
-      $("ssm_r").value = 1;
-      $("ssm_sd").value = 10;
-      $("ssm_diff").value = 4.5;
-    }
-    function calcSSMean() {
-      const zA = zFromConfidence(getNum("ssm_conf"));
-      const zB = zFromConfidence(getNum("ssm_power"));
-      const r = getNum("ssm_r") || 1;
-      const sd = getNum("ssm_sd");
-      const diff = getNum("ssm_diff");
-      if (!(sd > 0 && diff !== 0)) return;
-      const n1 = (Math.pow(zA + zB, 2) * sd * sd * (1 + 1 / r)) / (diff * diff);
-      const g1 = Math.ceil(n1);
-      const g2 = Math.ceil(g1 * r);
-      setText("ssm_n1", String(g1));
-      setText("ssm_n2", String(g2));
-      setText("ssm_total", String(g1 + g2));
-    }
-
-    function presetPower2Prop() {
-      $("p2p_n1").value = 180;
-      $("p2p_n2").value = 180;
-      $("p2p_p1").value = 40;
-      $("p2p_p2").value = 55;
-    }
-    function calcPower2Prop() {
-      const n1 = getNum("p2p_n1"), n2 = getNum("p2p_n2");
-      const p1 = getNum("p2p_p1") / 100, p2 = getNum("p2p_p2") / 100;
-      const se = Math.sqrt((p1 * (1 - p1)) / (n1 || 1e-9) + (p2 * (1 - p2)) / (n2 || 1e-9));
-      const diff = p2 - p1;
-      const z = diff / (se || 1e-9);
-      setText("p2p_diff", fmt(diff));
-      setText("p2p_z", fmt(z));
-      setText("p2p_power", fmt(approxPower(z), 2));
-    }
-
-    function presetUCC() {
-      $("ucc_a").value = 48; $("ucc_b").value = 72; $("ucc_c").value = 30; $("ucc_d").value = 90;
-    }
-    function calcUCC() {
-      const a = getNum("ucc_a"), b = getNum("ucc_b"), c = getNum("ucc_c"), d = getNum("ucc_d");
-      const n = a+b+c+d;
-      if (!(n > 0)) return;
-      const or = (a * d) / ((b || 1e-9) * (c || 1e-9));
-      const pc = a / ((a+b) || 1e-9);
-      const pn = c / ((c+d) || 1e-9);
-      const den = (a+b)*(c+d)*(a+c)*(b+d) || 1e-9;
-      const chi = n * Math.pow(a*d - b*c, 2) / den;
-      setText("ucc_or", fmt(or));
-      setText("ucc_pc", fmt(100 * pc, 2));
-      setText("ucc_pn", fmt(100 * pn, 2));
-      setText("ucc_chi", fmt(chi));
-    }
-
-    function presetCohort() {
-      $("co_a").value = 45; $("co_b").value = 155; $("co_c").value = 20; $("co_d").value = 180;
-    }
-    function calcCohort() {
-      const a = getNum("co_a"), b = getNum("co_b"), c = getNum("co_c"), d = getNum("co_d");
-      const re = a / ((a+b) || 1e-9);
-      const ru = c / ((c+d) || 1e-9);
-      const rr = re / (ru || 1e-9);
-      const rd = re - ru;
-      const afe = ((rr - 1) / (rr || 1e-9)) * 100;
-      setText("co_re", fmt(re));
-      setText("co_ru", fmt(ru));
-      setText("co_rr", fmt(rr));
-      setText("co_rd", fmt(rd));
-      setText("co_afe", fmt(afe, 2));
-    }
-
-    function presetTrial() {
-      $("tr_a").value = 108; $("tr_b").value = 72; $("tr_c").value = 72; $("tr_d").value = 108;
-    }
-    function calcTrial() {
-      const a = getNum("tr_a"), b = getNum("tr_b"), c = getNum("tr_c"), d = getNum("tr_d");
-      const rt = a / ((a+b) || 1e-9);
-      const rc = c / ((c+d) || 1e-9);
-      const ab = rt - rc;
-      const rr = rt / (rc || 1e-9);
-      const nnt = Math.abs(ab) > 0 ? 1 / Math.abs(ab) : Infinity;
-      setText("tr_rt", fmt(rt));
-      setText("tr_rc", fmt(rc));
-      setText("tr_ab", fmt(ab));
-      setText("tr_rr", fmt(rr));
-      setText("tr_nnt", Number.isFinite(nnt) ? fmt(nnt, 2) : "Infinity");
-    }
-
-    function presetCrossSectional() {
-      $("xs_x1").value = 60; $("xs_n1").value = 500;
-      $("xs_x2").value = 100; $("xs_n2").value = 500;
-    }
-    function calcCrossSectional() {
-      const x1 = getNum("xs_x1"), n1 = getNum("xs_n1");
-      const x2 = getNum("xs_x2"), n2 = getNum("xs_n2");
-      const p1 = x1 / (n1 || 1e-9);
-      const p2 = x2 / (n2 || 1e-9);
-      setText("xs_p1", fmt(p1));
-      setText("xs_p2", fmt(p2));
-      setText("xs_pr", fmt(p2 / (p1 || 1e-9)));
-      setText("xs_pd", fmt(p2 - p1));
-    }
-
-    function presetMeanDiff() {
-      $("md_n1").value = 75; $("md_m1").value = 26.8; $("md_s1").value = 9;
-      $("md_n2").value = 75; $("md_m2").value = 23.3; $("md_s2").value = 9;
-    }
-    function calcMeanDiff() {
-      const n1 = getNum("md_n1"), m1 = getNum("md_m1"), s1 = getNum("md_s1");
-      const n2 = getNum("md_n2"), m2 = getNum("md_m2"), s2 = getNum("md_s2");
-      if (!(n1 > 1 && n2 > 1)) return;
-      const psd = Math.sqrt((((n1 - 1) * s1 * s1) + ((n2 - 1) * s2 * s2)) / (n1 + n2 - 2));
-      const diff = m1 - m2;
-      const se = psd * Math.sqrt(1 / n1 + 1 / n2);
-      const d = diff / (psd || 1e-9);
-      setText("md_diff", fmt(diff));
-      setText("md_psd", fmt(psd));
-      setText("md_se", fmt(se));
-      setText("md_d", fmt(d));
-    }
-
-    function mulberry32(seed) {
-      let t = seed >>> 0;
-      return function () {
-        t += 0x6D2B79F5;
-        let r = Math.imul(t ^ (t >>> 15), 1 | t);
-        r ^= r + Math.imul(r ^ (r >>> 7), 61 | r);
-        return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
-      };
-    }
-
-    function presetSeededRNG() {
-      $("rng_seed").value = 2026;
-      $("rng_count").value = 12;
-      $("rng_min").value = 1;
-      $("rng_max").value = 100;
-      $("rng_mode").value = "dup";
-    }
-    function calcSeededRNG() {
-      const seed = Math.trunc(getNum("rng_seed"));
-      const count = Math.max(1, Math.trunc(getNum("rng_count")));
-      const min = Math.trunc(getNum("rng_min"));
-      const max = Math.trunc(getNum("rng_max"));
-      const mode = $("rng_mode").value;
-      if (!(max >= min)) return;
-
-      const rand = mulberry32(seed);
-      const out = [];
-
-      if (mode === "uniq") {
-        const pool = [];
-        for (let i = min; i <= max; i++) pool.push(i);
-        if (count > pool.length) {
-          setText("rng_out_count", "Error");
-          setText("rng_out_list", "Range too small for unique generation.");
-          return;
+        // Math Helpers
+        const sv = (id, val) => document.getElementById(id).value = val;
+        const v = (id) => parseFloat(document.getElementById(id).value) || 0;
+        const set = (id, val) => document.getElementById(id).innerText = (isNaN(val) || val===Infinity) ? "--" : val;
+        
+        // Z-score map
+        function getZ(percent) {
+            if(percent >= 99.99) return 3.89; if(percent >= 99.9) return 3.29;
+            if(percent >= 99) return 2.58; if(percent >= 95) return 1.96;
+            if(percent >= 90) return 1.64; if(percent >= 80) return 1.28; return 0;
         }
-        for (let i = 0; i < count; i++) {
-          const idx = Math.floor(rand() * pool.length);
-          out.push(pool.splice(idx, 1)[0]);
+
+        // --- Example Loaders ---
+        function loadExample(mod) {
+            if(mod==='smr') { sv('smr-o', 20); sv('smr-e', 15.5); c_smr(); }
+            if(mod==='propci') { sv('pci-x', 15); sv('pci-n', 100); c_propci(); }
+            if(mod==='2x2') { sv('t2-a', 30); sv('t2-b', 10); sv('t2-c', 15); sv('t2-d', 45); c_2x2(); }
+            if(mod==='dose') { sv('dr-s1', 1); sv('dr-a1', 10); sv('dr-b1', 40); sv('dr-s2', 2); sv('dr-a2', 25); sv('dr-b2', 30); sv('dr-s3', 3); sv('dr-a3', 50); sv('dr-b3', 15); c_dose(); }
+            if(mod==='rxc') { sv('rc11', 12); sv('rc12', 15); sv('rc13', 8); sv('rc21', 20); sv('rc22', 10); sv('rc23', 15); sv('rc31', 5); sv('rc32', 25); sv('rc33', 10); c_rxc(); }
+            if(mod==='mcc') { sv('mc-a', 10); sv('mc-b', 25); sv('mc-c', 8); sv('mc-d', 40); c_mcc(); }
+            if(mod==='screen') { sv('sc-a', 85); sv('sc-b', 15); sv('sc-c', 10); sv('sc-d', 90); c_screen(); }
+            if(mod==='1rate') { sv('r1-a', 18); sv('r1-pt', 1250); c_1rate(); }
+            if(mod==='2rates') { sv('r2-a1', 25); sv('r2-pt1', 800); sv('r2-a2', 14); sv('r2-pt2', 950); c_2rates(); }
+            if(mod==='meanci') { sv('mci-n', 64); sv('mci-m', 114.5); sv('mci-sd', 14.2); c_meanci(); }
+            if(mod==='median') { sv('med-n', 120); sv('med-p', 0.5); c_median(); }
+            if(mod==='ttest') { sv('tt-n1', 30); sv('tt-m1', 84.2); sv('tt-s1', 9.1); sv('tt-n2', 35); sv('tt-m2', 78.5); sv('tt-s2', 10.4); c_ttest(); }
+            if(mod==='anova') { 
+                for(let i=1;i<=8;i++){ sv('an-n'+i, ''); sv('an-m'+i, ''); sv('an-s'+i, ''); }
+                sv('an-n1', 15); sv('an-m1', 22.4); sv('an-s1', 3.4);
+                sv('an-n2', 15); sv('an-m2', 28.1); sv('an-s2', 4.1);
+                sv('an-n3', 15); sv('an-m3', 21.2); sv('an-s3', 3.9);
+                sv('an-n4', 15); sv('an-m4', 18.5); sv('an-s4', 3.1);
+                c_anova(); 
+            }
+            if(mod==='ssprop') { sv('sp-n', 1000000); sv('sp-p', 50); sv('sp-d', 5); sv('sp-deff', 1.0); c_ssprop(); }
+            if(mod==='ssucc') { sv('su-conf', 95); sv('su-pow', 80); sv('su-r', 1); sv('su-p2', 30); sv('su-or', 2.0); c_ssucc(); }
+            if(mod==='sscohort') { sv('sc-conf', 95); sv('sc-pow', 80); sv('sc-r', 1); sv('sc-p2', 15); sv('sc-p1', 5); c_sscohort(); }
+            if(mod==='ssmean') { sv('sm-conf', 95); sv('sm-pow', 80); sv('sm-r', 1); sv('sm-sd', 12); sv('sm-d', 5); c_ssmean(); }
         }
-      } else {
-        for (let i = 0; i < count; i++) {
-          out.push(Math.floor(rand() * (max - min + 1)) + min);
+
+        // --- Calculation Functions ---
+
+        // 1. SMR (Byar's Approximation)
+        function c_smr() { 
+            let o = v('smr-o'), e = v('smr-e');
+            set('out-smr-val', (o/e).toFixed(4));
+            let mult = 1.96 / (3 * Math.sqrt(o));
+            let low = o * Math.pow((1 - (1/(9*o)) - mult), 3) / e;
+            let up = (o+1) * Math.pow((1 - (1/(9*(o+1))) + (1.96/(3*Math.sqrt(o+1)))), 3) / e;
+            set('out-smr-l', low.toFixed(4)); set('out-smr-u', up.toFixed(4));
         }
-      }
 
-      setText("rng_out_count", String(out.length));
-      setText("rng_out_list", out.join(", "));
-    }
+        // 2. Proportion CI
+        function c_propci() { 
+            let x = v('pci-x'), n = v('pci-n'), p = x/n, z = 1.96, z2 = Math.pow(z,2);
+            let w_se = Math.sqrt(p*(1-p)/n);
+            set('out-pci-pw', p.toFixed(4)); set('out-pci-wl', Math.max(0, p - z*w_se).toFixed(4)); set('out-pci-wu', Math.min(1, p + z*w_se).toFixed(4));
+            let s_den = 2*(n+z2), s_t1 = 2*n*p + z2, s_t2 = z*Math.sqrt(z2 + 4*n*p*(1-p));
+            set('out-pci-ps', p.toFixed(4)); set('out-pci-sl', Math.max(0, (s_t1-s_t2)/s_den).toFixed(4)); set('out-pci-su', Math.min(1, (s_t1+s_t2)/s_den).toFixed(4));
+        }
 
-    renderAnovaRows();
+        // 3. 2x2 Table
+        function c_2x2() { 
+            let a=v('t2-a'), b=v('t2-b'), c=v('t2-c'), d=v('t2-d'), n=a+b+c+d;
+            set('out-2x2-or', ((a*d)/(b*c)).toFixed(4));
+            set('out-2x2-rr', ((a/(a+b))/(c/(c+d))).toFixed(4));
+            set('out-2x2-chi', (n*Math.pow((a*d-b*c),2) / ((a+b)*(c+d)*(a+c)*(b+d))).toFixed(4));
+            set('out-2x2-yates', (n*Math.pow(Math.max(0, Math.abs(a*d-b*c) - n/2), 2) / ((a+b)*(c+d)*(a+c)*(b+d))).toFixed(4));
+        }
 
-    [
-      calcSMR, calcPCI, calc2x2, calcDose, calcRxC, calcMatchedCC, calcScreening,
-      calcPersonTime, calcOneRate, calcCompareRates, calcMeanCI, calcMedianCI,
-      calcTTest, calcANOVA, calcSSProp, calcSSUCC, calcSSCohort, calcSSMean,
-      calcPower2Prop, calcUCC, calcCohort, calcTrial, calcCrossSectional,
-      calcMeanDiff, calcSeededRNG
-    ].forEach((fn) => fn());
-  </script>
+        // 4. Dose-Response
+        function c_dose() { 
+            let s=[v('dr-s1'),v('dr-s2'),v('dr-s3')], a=[v('dr-a1'),v('dr-a2'),v('dr-a3')], b=[v('dr-b1'),v('dr-b2'),v('dr-b3')];
+            let n=[], t_a=0, t_n=0, sum_s=0, sum_sa=0, sum_s2n=0;
+            for(let i=0;i<3;i++) { 
+                n[i]=a[i]+b[i]; 
+                if(n[i]>0) { t_a+=a[i]; t_n+=n[i]; sum_s+=s[i]*n[i]; sum_sa+=s[i]*a[i]; sum_s2n+=Math.pow(s[i],2)*n[i]; }
+            }
+            if(t_n===0) return;
+            let exp = t_a/t_n, v_s = sum_s2n - Math.pow(sum_s,2)/t_n;
+            let chi = Math.pow(sum_sa - exp*sum_s, 2) / (exp * (1-exp) * v_s);
+            set('out-dr-chi', chi.toFixed(4));
+        }
+
+        // 5. R by C Table
+        function c_rxc() { 
+            let d = [[v('rc11'),v('rc12'),v('rc13')],[v('rc21'),v('rc22'),v('rc23')],[v('rc31'),v('rc32'),v('rc33')]];
+            let rt=[0,0,0], ct=[0,0,0], gt=0;
+            for(let r=0;r<3;r++) for(let c=0;c<3;c++) { rt[r]+=d[r][c]; ct[c]+=d[r][c]; gt+=d[r][c]; }
+            let chi = 0;
+            for(let r=0;r<3;r++) for(let c=0;c<3;c++) { 
+                let e = (rt[r]*ct[c])/gt; 
+                if(e>0) chi += Math.pow(d[r][c]-e,2)/e; 
+            }
+            let r_cnt = rt.filter(x=>x>0).length, c_cnt = ct.filter(x=>x>0).length;
+            set('out-rxc-chi', chi.toFixed(4)); set('out-rxc-df', Math.max(0, (r_cnt-1)*(c_cnt-1)));
+        }
+
+        // 6. Matched CC
+        function c_mcc() { let b=v('mc-b'), c=v('mc-c'); set('out-mcc-or', (c/b).toFixed(4)); set('out-mcc-chi', (Math.pow(Math.abs(b-c)-1,2)/(b+c)).toFixed(4)); }
+
+        // 7. Screening
+        function c_screen() { 
+            let a=v('sc-a'), b=v('sc-b'), c=v('sc-c'), d=v('sc-d');
+            set('out-sc-sens', ((a/(a+c))*100).toFixed(2)); set('out-sc-spec', ((d/(b+d))*100).toFixed(2));
+            set('out-sc-ppv', ((a/(a+b))*100).toFixed(2)); set('out-sc-npv', ((d/(c+d))*100).toFixed(2));
+            set('out-sc-acc', (((a+d)/(a+b+c+d))*100).toFixed(2));
+        }
+
+        // 8. 1 Rate (Byar's)
+        function c_1rate() { 
+            let a=v('r1-a'), pt=v('r1-pt'), r=a/pt;
+            set('out-1r-rate', r.toFixed(6));
+            let mult = 1.96 / (3 * Math.sqrt(a));
+            set('out-1r-low', ((a * Math.pow(1 - 1/(9*a) - mult, 3))/pt).toFixed(6));
+            set('out-1r-up', (((a+1) * Math.pow(1 - 1/(9*(a+1)) + (1.96/(3*Math.sqrt(a+1))), 3))/pt).toFixed(6));
+        }
+
+        // 9. 2 Rates
+        function c_2rates() { 
+            let r1 = v('r2-a1')/v('r2-pt1'), r2 = v('r2-a2')/v('r2-pt2');
+            set('out-2r-rr', (r1/r2).toFixed(4)); set('out-2r-rd', (r1-r2).toFixed(6)); 
+        }
+
+        // 10. Mean CI
+        function c_meanci() { let m=v('mci-m'), se=v('mci-sd')/Math.sqrt(v('mci-n')); set('out-mci-l', (m-1.96*se).toFixed(4)); set('out-mci-u', (m+1.96*se).toFixed(4)); }
+
+        // 11. Median CI
+        function c_median() { 
+            let np = v('med-n')*v('med-p'), se = 1.96*Math.sqrt(v('med-n')*v('med-p')*(1-v('med-p')));
+            set('out-med-l', Math.round(np-se)); set('out-med-u', Math.round(np+se)); 
+        }
+
+        // 12. t-test
+        function c_ttest() { 
+            let n1=v('tt-n1'), m1=v('tt-m1'), s1=v('tt-s1'), n2=v('tt-n2'), m2=v('tt-m2'), s2=v('tt-s2');
+            let pool = ((n1-1)*Math.pow(s1,2) + (n2-1)*Math.pow(s2,2)) / (n1+n2-2);
+            let t = Math.abs(m1-m2) / Math.sqrt(pool/n1 + pool/n2);
+            set('out-tt-diff', Math.abs(m1-m2).toFixed(4)); set('out-tt-val', t.toFixed(4)); set('out-tt-df', n1+n2-2);
+        }
+
+        // 13. ANOVA (Dynamic 2-8 Groups)
+        function c_anova() { 
+            let groups = [];
+            for(let i=1; i<=8; i++) {
+                let n_val = v('an-n'+i);
+                if(n_val > 0) {
+                    groups.push({ n: n_val, m: v('an-m'+i), s: v('an-s'+i) });
+                }
+            }
+            
+            let k = groups.length;
+            if(k < 2) {
+                set('out-an-f', 'Need >= 2 groups'); set('out-an-dfb', '--'); set('out-an-dfw', '--');
+                set('out-an-k', k); set('out-an-nt', '--'); return;
+            }
+
+            let nT = 0, sum_nm = 0;
+            groups.forEach(g => { nT += g.n; sum_nm += (g.n * g.m); });
+            let gm = sum_nm / nT;
+
+            let ssb = 0, ssw = 0;
+            groups.forEach(g => {
+                ssb += g.n * Math.pow(g.m - gm, 2);
+                if(g.n > 1) { ssw += (g.n - 1) * Math.pow(g.s, 2); }
+            });
+
+            let dfb = k - 1;
+            let dfw = nT - k;
+            let msb = ssb / dfb;
+            let msw = ssw / dfw;
+
+            set('out-an-k', k);
+            set('out-an-nt', nT);
+            set('out-an-f', (msb/msw).toFixed(4)); 
+            set('out-an-dfb', dfb); 
+            set('out-an-dfw', dfw);
+        }
+
+        // 14. SS Prop
+        function c_ssprop() { 
+            let p=v('sp-p')/100, d=v('sp-d')/100, N=v('sp-n'), deff=v('sp-deff');
+            const run = (z) => {
+                let res = (deff * N * Math.pow(z,2) * p * (1-p)) / (Math.pow(d,2)*(N-1) + Math.pow(z,2)*p*(1-p));
+                return Math.ceil(res);
+            };
+            set('out-sp-99', run(2.58)); set('out-sp-95', run(1.96)); set('out-sp-90', run(1.64)); set('out-sp-80', run(1.28));
+        }
+
+        // SS Base (Kelsey)
+        function kelsey_z(conf, pow) { 
+            let za = getZ(conf);
+            let zb = (pow>=90)?1.28 : (pow>=80)?0.84 : 0;
+            return {a: za, b: zb};
+        }
+
+        // 15. SS UCC
+        function c_ssucc() { 
+            let {a,b} = kelsey_z(v('su-conf'), v('su-pow')), r = v('su-r'), p2 = v('su-p2')/100, or = v('su-or');
+            let p1 = (p2*or) / (1-p2+p2*or), p = (p1 + r*p2)/(r+1);
+            let n1 = Math.pow(a*Math.sqrt((r+1)*p*(1-p)) + b*Math.sqrt(r*p1*(1-p1) + p2*(1-p2)), 2) / (r*Math.pow(p1-p2,2));
+            set('out-su-cases', Math.ceil(n1)); set('out-su-ctrls', Math.ceil(n1*r)); set('out-su-total', Math.ceil(n1 + n1*r));
+        }
+
+        // 16. SS Cohort
+        function c_sscohort() { 
+            let {a,b} = kelsey_z(v('sc-conf'), v('sc-pow')), r = v('sc-r'), p2 = v('sc-p2')/100, p1 = v('sc-p1')/100, p = (p1 + r*p2)/(r+1);
+            let n1 = Math.pow(a*Math.sqrt((r+1)*p*(1-p)) + b*Math.sqrt(r*p1*(1-p1) + p2*(1-p2)), 2) / (r*Math.pow(p1-p2,2));
+            set('out-sc-n1', Math.ceil(n1)); set('out-sc-n2', Math.ceil(n1*r)); set('out-sc-total', Math.ceil(n1 + n1*r));
+        }
+
+        // 17. SS Mean Diff
+        function c_ssmean() { 
+            let {a,b} = kelsey_z(v('sm-conf'), v('sm-pow')), r = v('sm-r'), sd = v('sm-sd'), d = v('sm-d');
+            let n1 = Math.pow(a+b, 2) * Math.pow(sd, 2) * (r+1) / (r * Math.pow(d, 2));
+            set('out-sm-n1', Math.ceil(n1)); set('out-sm-n2', Math.ceil(n1*r)); set('out-sm-total', Math.ceil(n1 + n1*r));
+        }
+    </script>
 </body>
 </html>
