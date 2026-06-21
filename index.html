@@ -342,6 +342,8 @@
       background: #ffffff;
       border: 1px solid #7f9ca4;
       box-shadow: 0 10px 24px rgba(0, 76, 92, .10);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .stat-title {
@@ -472,6 +474,8 @@
       border: 1px solid #9da9ad;
       background: #ffffff;
       box-shadow: 6px 7px 0 rgba(0, 0, 0, .35);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .entry-title {
@@ -480,6 +484,7 @@
       font-weight: 800;
       background: #c9c9c9;
       border-bottom: 1px solid #ffffff;
+      white-space: normal;
     }
 
     .entry-table {
@@ -767,12 +772,71 @@
 
       .entry-sheet {
         max-width: 100%;
-        overflow-x: auto;
         box-shadow: 4px 5px 0 rgba(0, 0, 0, .28);
       }
 
       .entry-table {
         min-width: 620px;
+      }
+
+      .ssprop-sheet {
+        overflow-x: visible;
+      }
+
+      .ssprop-sheet .entry-title {
+        font-size: .98rem;
+        line-height: 1.25;
+      }
+
+      .ssprop-sheet .entry-table {
+        min-width: 0;
+        table-layout: auto;
+      }
+
+      .ssprop-sheet .entry-table tbody,
+      .ssprop-sheet .entry-table tr,
+      .ssprop-sheet .entry-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .ssprop-sheet .entry-table tr {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 112px;
+        border-bottom: 1px solid #ffffff;
+      }
+
+      .ssprop-sheet .entry-table td {
+        min-height: 42px;
+        height: auto;
+      }
+
+      .ssprop-sheet .entry-table td:first-child {
+        display: flex;
+        align-items: center;
+        padding: 8px 10px;
+        text-align: left;
+      }
+
+      .ssprop-sheet .entry-table td:nth-child(2) {
+        display: flex;
+        align-items: stretch;
+      }
+
+      .ssprop-sheet .entry-table td:nth-child(3) {
+        grid-column: 1 / -1;
+        min-height: 28px;
+        padding: 5px 10px 8px;
+        color: #315c67;
+        font-size: .78rem;
+        text-align: left;
+        background: #eef9fc;
+      }
+
+      .ssprop-sheet .entry-table input {
+        min-height: 42px;
+        height: 100%;
+        font-size: 1rem;
       }
 
       .form-grid {
@@ -1778,7 +1842,7 @@
       const values = Object.fromEntries(calc.fields.map(f => [f.key, f.sample]));
       return `
         <div class="wide">
-          <div class="entry-sheet">
+          <div class="entry-sheet ssprop-sheet">
             <div class="entry-title">Sample Size for % Frequency in a Population (Random Sample)</div>
             <table class="entry-table">
               <tbody>
